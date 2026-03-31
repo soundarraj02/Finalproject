@@ -1,0 +1,243 @@
+.nongst-page {
+  min-height: 100vh;
+  background: #f4f6fb;
+  padding: 24px;
+}
+
+.nongst-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  background: #fff;
+  border-radius: 10px;
+  padding: 11px 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+
+.nongst-nav-btn {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.nongst-nav-btn:hover { opacity: 0.87; }
+.nongst-breadcrumb { font-size: 14px; font-weight: 600; color: #764ba2; }
+
+.nongst-saved-banner {
+  background: #d1fae5;
+  color: #065f46;
+  border: 1px solid #6ee7b7;
+  border-radius: 8px;
+  padding: 10px 20px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.nongst-bill-wrapper {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.1);
+  padding: 32px 36px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.nongst-bill-title {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #1f2937;
+  border-bottom: 3px solid #10b981;
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+}
+
+.nongst-top-section {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 20px;
+}
+
+.nongst-our-details { flex: 1; }
+.nongst-company-name { font-size: 18px; font-weight: 800; color: #1f2937; margin-bottom: 4px; }
+.nongst-company-addr, .nongst-company-phone { font-size: 13px; color: #4b5563; margin-bottom: 2px; }
+
+.nongst-invoice-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 200px;
+}
+.nongst-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.nongst-meta-row label { font-size: 12px; font-weight: 600; color: #374151; min-width: 80px; }
+
+.nongst-input {
+  padding: 6px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #374151;
+  background: #fafafa;
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+}
+.nongst-input:focus { border-color: #10b981; background: #fff; }
+
+.nongst-section-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #10b981, #059669);
+  padding: 6px 12px;
+  border-radius: 6px;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+.nongst-invoice-to {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+}
+.nongst-to-row { display: flex; gap: 20px; align-items: flex-start; }
+.nongst-to-group { display: flex; flex-direction: column; gap: 5px; }
+.nongst-to-group label { font-size: 12px; font-weight: 600; color: #374151; }
+.nongst-select {
+  padding: 7px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #374151;
+  background: #fafafa;
+  outline: none;
+  min-width: 200px;
+  cursor: pointer;
+}
+.nongst-select:focus { border-color: #10b981; }
+.nongst-client-address { font-size: 12px; color: #6b7280; margin-top: 22px; max-width: 260px; }
+
+/* Table */
+.nongst-table-wrapper { overflow-x: auto; margin-bottom: 20px; }
+.nongst-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.nongst-table th {
+  background: #f3f4f6;
+  padding: 9px 12px;
+  text-align: left;
+  font-weight: 700;
+  color: #374151;
+  border: 1px solid #e5e7eb;
+}
+.nongst-table td {
+  padding: 8px 12px;
+  border: 1px solid #e5e7eb;
+  color: #374151;
+  vertical-align: middle;
+}
+.nongst-table-input {
+  width: 100%;
+  padding: 5px 8px;
+  border: 1px solid #e5e7eb;
+  border-radius: 5px;
+  font-size: 13px;
+  background: #fff;
+  outline: none;
+}
+.nongst-table-input.number { max-width: 90px; }
+.nongst-table-input:focus { border-color: #10b981; }
+.nongst-price-cell { font-weight: 600; text-align: right; }
+
+.nongst-add-row-btn {
+  background: #d1fae5;
+  color: #065f46;
+  border: none;
+  border-radius: 5px;
+  width: 26px;
+  height: 26px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-right: 5px;
+}
+.nongst-del-row-btn {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: none;
+  border-radius: 5px;
+  width: 26px;
+  height: 26px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.nongst-total-row td { background: #f9fafb; font-size: 13px; }
+.nongst-total-label { text-align: right; font-weight: 600; }
+.nongst-grand-total-row td { background: #ecfdf5; font-weight: 700; font-size: 14px; }
+
+.nongst-bottom-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 16px;
+}
+.nongst-bottom-left { flex: 1; }
+.nongst-words { font-size: 13px; color: #374151; margin-bottom: 16px; font-style: italic; }
+.nongst-bank-details {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 12px;
+}
+.nongst-bank-title { font-weight: 700; color: #374151; margin-bottom: 8px; font-size: 13px; }
+.nongst-bank-row { display: flex; gap: 8px; margin-bottom: 3px; color: #4b5563; }
+.nongst-bank-row span { font-weight: 600; min-width: 100px; }
+.nongst-bottom-right { display: flex; flex-direction: column; gap: 10px; min-width: 130px; }
+.nongst-print-btn, .nongst-save-btn {
+  padding: 10px 22px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.2s;
+}
+.nongst-print-btn {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+.nongst-print-btn:hover { background: #e5e7eb; }
+.nongst-save-btn {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #fff;
+}
+.nongst-save-btn:hover { opacity: 0.88; }
+
+@media print {
+  .no-print { display: none !important; }
+  .nongst-page { padding: 0; background: #fff; }
+  .nongst-bill-wrapper { box-shadow: none; border-radius: 0; }
+  .nongst-input, .nongst-select, .nongst-table-input {
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+  }
+}

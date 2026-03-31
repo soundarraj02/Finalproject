@@ -1,0 +1,215 @@
+.admin-dashboard {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #f5f5f5;
+}
+
+.dashboard-wrapper {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.dashboard-main {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 32px;
+  background: #f5f5f5;
+}
+
+.content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  gap: 20px;
+}
+
+.content-header h1 {
+  color: #333;
+  font-size: 28px;
+  margin: 0;
+  font-weight: 600;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 8px 16px;
+  transition: all 0.3s ease;
+}
+
+.search-bar:focus-within {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.search-bar input {
+  flex: 1;
+  border: none;
+  background: none;
+  outline: none;
+  font-size: 14px;
+  color: #333;
+}
+
+.search-bar input::placeholder {
+  color: #999;
+}
+
+.search-bar button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #667eea;
+  transition: all 0.2s ease;
+}
+
+.search-bar button:hover {
+  transform: scale(1.1);
+  color: #764ba2;
+}
+
+.dashboard-content {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+}
+
+.chart-container {
+  width: 100%;
+}
+
+.content-section {
+  background: white;
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f0f0f0;
+}
+
+.content-section h1 {
+  color: #333;
+  font-size: 24px;
+  margin: 0 0 16px 0;
+  font-weight: 600;
+}
+
+.content-section p {
+  color: #666;
+  font-size: 14px;
+  margin: 0;
+}
+
+/* Scrollbar styling */
+.dashboard-main::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dashboard-main::-webkit-scrollbar-track {
+  background: #f0f0f0;
+}
+
+.dashboard-main::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+.dashboard-main::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+@media (max-width: 1024px) {
+  .dashboard-main {
+    padding: 24px;
+  }
+
+  .content-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .content-header h1 {
+    font-size: 24px;
+  }
+
+  .search-bar {
+    width: 100%;
+  }
+
+  .dashboard-grid {
+    gap: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-main {
+    padding: 20px;
+  }
+
+  .content-header {
+    margin-bottom: 24px;
+    gap: 16px;
+  }
+
+  .content-header h1 {
+    font-size: 20px;
+  }
+
+  .content-section {
+    padding: 20px;
+  }
+
+  .content-section h1 {
+    font-size: 20px;
+  }
+
+  .dashboard-content {
+    gap: 24px;
+  }
+
+  .dashboard-grid {
+    gap: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-main {
+    padding: 16px;
+  }
+
+  .content-header {
+    margin-bottom: 20px;
+    gap: 12px;
+  }
+
+  .content-header h1 {
+    font-size: 18px;
+  }
+
+  .search-bar input {
+    font-size: 13px;
+  }
+
+  .content-section {
+    padding: 16px;
+  }
+
+  .content-section h1 {
+    font-size: 18px;
+  }
+}
+

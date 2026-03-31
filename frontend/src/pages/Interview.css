@@ -1,0 +1,78 @@
+.interview-landing {
+  min-height: 100vh;
+  background: #f4f6fb;
+  padding: 24px;
+}
+.interview-landing-header {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 28px;
+  background: #fff;
+  border-radius: 10px;
+  padding: 16px 22px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+.interview-back-btn {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 9px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.interview-back-btn:hover { opacity: 0.87; }
+.interview-landing-header h1 { margin: 0; font-size: 22px; color: #1f2937; }
+
+.interview-stat-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  margin-bottom: 28px;
+}
+.interview-stat-card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.interview-stat-icon { font-size: 28px; }
+.interview-stat-value { font-size: 26px; font-weight: 700; color: #1f2937; }
+.interview-stat-label { font-size: 13px; color: #6b7280; }
+
+.interview-action-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+.interview-action-card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  padding: 22px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  transition: box-shadow 0.2s, transform 0.15s;
+  border: 2px solid transparent;
+}
+.interview-action-card:hover {
+  box-shadow: 0 6px 20px rgba(102,126,234,0.18);
+  border-color: #764ba2;
+  transform: translateY(-2px);
+}
+.interview-action-icon { font-size: 28px; }
+.interview-action-title { font-size: 17px; font-weight: 700; color: #1f2937; }
+.interview-action-desc { font-size: 12px; color: #6b7280; margin-top: 2px; }
+
+@media (max-width: 768px) {
+  .interview-stat-cards { grid-template-columns: repeat(2, 1fr); }
+  .interview-action-cards { grid-template-columns: 1fr; }
+}

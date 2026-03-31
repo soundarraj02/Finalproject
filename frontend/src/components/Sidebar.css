@@ -1,0 +1,127 @@
+.admin-sidebar {
+  width: 260px;
+  background: #f8f9fa;
+  border-right: 1px solid #e0e0e0;
+  height: calc(100vh - 70px);
+  overflow-y: auto;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-sidebar.closed {
+  width: 0;
+  border-right: none;
+  overflow: hidden;
+}
+
+.sidebar-menu {
+  flex: 1;
+  padding: 20px 0;
+}
+
+.sidebar-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-menu li {
+  margin: 0;
+}
+
+.menu-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 24px;
+  background: none;
+  border: none;
+  border-left: 4px solid transparent;
+  cursor: pointer;
+  color: #333;
+  font-size: 15px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  text-align: left;
+}
+
+.menu-item:hover {
+  background: #e8e9ff;
+  border-left-color: #667eea;
+  padding-left: 24px;
+}
+
+.menu-item.active {
+  background: linear-gradient(90deg, rgba(102, 126, 234, 0.1) 0%, rgba(102, 126, 234, 0.05) 100%);
+  border-left-color: #667eea;
+  color: #667eea;
+  font-weight: 600;
+}
+
+.menu-icon {
+  font-size: 20px;
+  min-width: 20px;
+}
+
+.menu-label {
+  white-space: nowrap;
+}
+
+.sidebar-calendar {
+  padding: 20px 16px;
+  border-top: 1px solid #e0e0e0;
+  background: white;
+  margin-top: auto;
+}
+
+/* Scrollbar styling */
+.admin-sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.admin-sidebar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.admin-sidebar::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}
+
+.admin-sidebar::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+@media (max-width: 1024px) {
+  .admin-sidebar {
+    position: fixed;
+    left: 0;
+    top: 70px;
+    z-index: 50;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .admin-sidebar.closed {
+    transform: translateX(-100%);
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-sidebar {
+    width: 240px;
+  }
+
+  .menu-item {
+    padding: 12px 18px;
+  }
+
+  .menu-item:hover {
+    padding-left: 18px;
+  }
+
+  .menu-label {
+    font-size: 14px;
+  }
+}

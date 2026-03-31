@@ -1,0 +1,132 @@
+.master-set-page {
+  min-height: calc(100vh - 70px);
+  background: #f5f6fb;
+  padding: 24px;
+}
+
+.master-invoice-topline {
+  max-width: 900px;
+  margin: 0 auto 10px;
+}
+
+.master-set-topbar {
+  max-width: 900px;
+  margin: 0 auto 18px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.master-left-btn,
+.master-right-btn,
+.master-primary-btn {
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.master-left-btn,
+.master-primary-btn {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff;
+}
+
+.master-right-btn {
+  background: #eef2ff;
+  color: #4338ca;
+}
+
+.master-set-card {
+  max-width: 900px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+.master-set-card h2 {
+  margin: 0 0 6px;
+  color: #1f2937;
+}
+
+.master-set-card p {
+  margin: 0 0 18px;
+  color: #6b7280;
+}
+
+.master-id-box {
+  margin-bottom: 18px;
+}
+
+.master-id-box label {
+  display: block;
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 6px;
+}
+
+.master-id-value {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 12px;
+  font-family: 'Courier New', monospace;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #111827;
+  background: #fafafa;
+}
+
+.master-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.master-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.master-form-group.full {
+  grid-column: 1 / -1;
+}
+
+.master-form-group label {
+  font-size: 13px;
+  color: #374151;
+  font-weight: 600;
+}
+
+.master-form-group input,
+.master-form-group textarea,
+.master-form-group select {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+  outline: none;
+}
+
+.master-form-group input:focus,
+.master-form-group textarea:focus,
+.master-form-group select:focus {
+  border-color: #667eea;
+}
+
+.master-set-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+@media (max-width: 768px) {
+  .master-form-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,267 @@
+.customer-list-page {
+  background: #f5f5f5;
+  min-height: calc(100vh - 70px);
+  padding: 40px 20px;
+}
+
+.customer-list-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+
+.list-header h1 {
+  color: #333;
+  font-size: 28px;
+  margin: 0;
+  font-weight: 600;
+  flex: 1;
+  text-align: center;
+}
+
+.list-header .back-btn,
+.list-header .nav-btn,
+.empty-state .add-btn,
+.pagination-btn,
+.card-actions button,
+.close-btn,
+.delete-confirm-btn,
+.cancel-confirm-btn {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.list-header .back-btn,
+.list-header .nav-btn,
+.empty-state .add-btn,
+.pagination-btn,
+.delete-confirm-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.filters-section,
+.empty-state,
+.customer-card,
+.modal-content,
+.confirm-modal {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f0f0f0;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 40px;
+}
+
+.empty-icon {
+  font-size: 64px;
+  margin-bottom: 24px;
+}
+
+.filters-section {
+  padding: 20px;
+  margin-bottom: 24px;
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.search-box {
+  flex: 1;
+  min-width: 250px;
+  position: relative;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 10px 40px 10px 14px;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.search-box input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.search-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.results-count,
+.page-info {
+  color: #666;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.customer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.customer-card {
+  padding: 20px;
+}
+
+.customer-card-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 18px;
+}
+
+.customer-card-top h3 {
+  margin: 0 0 4px;
+  color: #333;
+}
+
+.customer-card-top p {
+  margin: 0;
+  color: #667eea;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.customer-chip {
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  background: #eef0ff;
+  color: #4b58c4;
+}
+
+.customer-detail-grid,
+.modal-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detail-item.full-width {
+  grid-column: 1 / -1;
+}
+
+.detail-item .label {
+  color: #999;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detail-item .value {
+  color: #333;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.card-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.view-btn {
+  background: #eef0ff;
+  color: #4b58c4;
+}
+
+.delete-btn,
+.close-btn,
+.cancel-confirm-btn {
+  background: #f4f4f4;
+  color: #333;
+}
+
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 28px;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 1000;
+}
+
+.modal-content,
+.confirm-modal {
+  width: 100%;
+  max-width: 700px;
+  padding: 24px;
+}
+
+.confirm-modal {
+  max-width: 420px;
+  text-align: center;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+@media (max-width: 768px) {
+  .customer-detail-grid,
+  .modal-detail-grid,
+  .pagination-controls,
+  .confirm-actions {
+    grid-template-columns: 1fr;
+    flex-direction: column;
+  }
+
+  .list-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .list-header h1 {
+    text-align: left;
+  }
+}
