@@ -1,6 +1,6 @@
 .gst-page {
   min-height: 100vh;
-  background: #f4f6fb;
+  background: #f3f4f6;
   padding: 24px;
 }
 
@@ -42,43 +42,78 @@
 
 .gst-bill-wrapper {
   background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 16px rgba(0,0,0,0.1);
-  padding: 32px 36px;
-  max-width: 900px;
+  border-radius: 2px;
+  border: 1px solid #cfd4dc;
+  box-shadow: 0 2px 12px rgba(15, 23, 42, 0.07);
+  padding: 20px 22px;
+  max-width: 940px;
   margin: 0 auto;
 }
 
+.gst-bill-headline-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
 .gst-bill-title {
-  text-align: center;
-  font-size: 22px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #0f172a;
+}
+
+.gst-brand-block {
+  text-align: right;
+  border: 1px solid #b9d4d2;
+  padding: 4px 8px;
+}
+
+.gst-brand-name {
+  font-size: 11px;
+  line-height: 1.1;
   font-weight: 800;
-  letter-spacing: 2px;
+  color: #0f766e;
+}
+
+.gst-brand-sub {
+  font-size: 9px;
+  line-height: 1.2;
+  color: #0f766e;
+}
+
+.gst-panel-label {
+  display: inline-block;
+  margin-bottom: 6px;
+  color: #334155;
+  font-size: 11px;
+  font-weight: 700;
   text-transform: uppercase;
-  color: #1f2937;
-  border-bottom: 3px solid #667eea;
-  padding-bottom: 12px;
-  margin-bottom: 20px;
 }
 
 .gst-top-section {
-  display: flex;
-  justify-content: space-between;
-  gap: 24px;
-  margin-bottom: 20px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+  gap: 12px;
+  margin-bottom: 10px;
 }
 
 .gst-our-details {
-  flex: 1;
+  padding: 8px;
+  border: 1px solid #d5dae1;
+  border-radius: 0;
+  background: #fff;
 }
 .gst-company-name {
-  font-size: 18px;
-  font-weight: 800;
+  font-size: 11px;
+  font-weight: 700;
   color: #1f2937;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 .gst-company-addr, .gst-company-phone, .gst-company-gstin {
-  font-size: 13px;
+  font-size: 10px;
   color: #4b5563;
   margin-bottom: 2px;
 }
@@ -86,8 +121,12 @@
 .gst-invoice-meta {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
+  padding: 8px;
   min-width: 220px;
+  border: 1px solid #d5dae1;
+  border-radius: 0;
+  background: #fff;
 }
 .gst-meta-row {
   display: flex;
@@ -96,47 +135,49 @@
   gap: 10px;
 }
 .gst-meta-row label {
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 10px;
+  font-weight: 700;
   color: #374151;
-  min-width: 80px;
+  min-width: 66px;
 }
 
 .gst-input {
-  padding: 6px 10px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 13px;
+  padding: 3px 6px;
+  border: 1px solid #cfd5dd;
+  border-radius: 0;
+  font-size: 10px;
   color: #374151;
-  background: #fafafa;
+  background: #fff;
   outline: none;
   transition: border-color 0.2s;
   width: 100%;
 }
-.gst-input:focus { border-color: #764ba2; background: #fff; }
+.gst-input:focus { border-color: #0f766e; background: #fff; }
 
 .gst-section-title {
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 700;
-  color: #fff;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  padding: 6px 12px;
-  border-radius: 6px;
+  color: #0f172a;
+  background: none;
+  padding: 0;
+  border-radius: 0;
   display: inline-block;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 }
 
 .gst-invoice-to {
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  padding: 14px 16px;
-  margin-bottom: 20px;
+  border: 1px solid #d5dae1;
+  border-radius: 0;
+  padding: 8px;
+  margin-bottom: 10px;
+  background: #fff;
 }
 
 .gst-to-row {
-  display: flex;
-  gap: 20px;
-  align-items: flex-start;
+  display: grid;
+  grid-template-columns: minmax(220px, 300px) minmax(0, 1fr);
+  gap: 8px;
+  align-items: stretch;
 }
 
 .gst-to-group {
@@ -146,152 +187,240 @@
 }
 .gst-to-group label { font-size: 12px; font-weight: 600; color: #374151; }
 
+.gst-to-group label { font-size: 10px; }
+
 .gst-select {
-  padding: 7px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 13px;
+  padding: 3px 6px;
+  border: 1px solid #cfd5dd;
+  border-radius: 0;
+  font-size: 10px;
   color: #374151;
-  background: #fafafa;
+  background: #fff;
   outline: none;
   min-width: 200px;
   cursor: pointer;
 }
-.gst-select:focus { border-color: #764ba2; }
+.gst-select:focus { border-color: #0f766e; }
 
 .gst-client-address {
-  font-size: 12px;
+  font-size: 10px;
   color: #6b7280;
-  margin-top: 22px;
-  max-width: 260px;
+  max-width: 100%;
+}
+
+.gst-client-card {
+  min-height: 100%;
+  border: 1px solid #cfd5dd;
+  border-radius: 0;
+  padding: 6px;
+  background: #fff;
+}
+
+.gst-client-contact {
+  margin-top: 4px;
+  font-size: 10px;
+  color: #6b7280;
 }
 
 /* Table */
-.gst-table-wrapper { overflow-x: auto; margin-bottom: 20px; }
+.gst-table-wrapper {
+  overflow-x: auto;
+  margin-bottom: 8px;
+  border: 1px solid #cfd5dd;
+  border-radius: 0;
+}
 .gst-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 13px;
 }
 .gst-table th {
-  background: #f3f4f6;
-  padding: 9px 12px;
+  background: #e6f4f1;
+  padding: 5px 6px;
   text-align: left;
   font-weight: 700;
-  color: #374151;
-  border: 1px solid #e5e7eb;
+  color: #0f172a;
+  border: 1px solid #cfd5dd;
+  font-size: 10px;
 }
 .gst-table td {
-  padding: 8px 12px;
-  border: 1px solid #e5e7eb;
+  padding: 3px 6px;
+  border: 1px solid #cfd5dd;
   color: #374151;
   vertical-align: middle;
+  font-size: 10px;
 }
 .gst-table-input {
   width: 100%;
-  padding: 5px 8px;
-  border: 1px solid #e5e7eb;
-  border-radius: 5px;
-  font-size: 13px;
+  padding: 2px 4px;
+  border: 1px solid #cfd5dd;
+  border-radius: 0;
+  font-size: 10px;
   background: #fff;
   outline: none;
 }
 .gst-table-input.number { max-width: 90px; }
-.gst-table-input:focus { border-color: #764ba2; }
+.gst-table-input:focus { border-color: #0f766e; }
 .gst-price-cell { font-weight: 600; text-align: right; }
 
 .gst-add-row-btn {
-  background: #d1fae5;
-  color: #065f46;
+  background: #0f766e;
+  color: #fff;
   border: none;
-  border-radius: 5px;
-  width: 26px;
-  height: 26px;
-  font-size: 16px;
+  border-radius: 0;
+  width: 18px;
+  height: 18px;
+  font-size: 12px;
   font-weight: 700;
   cursor: pointer;
-  margin-right: 5px;
+  margin-right: 3px;
+  line-height: 1;
 }
 .gst-del-row-btn {
-  background: #fee2e2;
-  color: #b91c1c;
+  background: #ef4444;
+  color: #fff;
   border: none;
-  border-radius: 5px;
-  width: 26px;
-  height: 26px;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.gst-total-row td { background: #f9fafb; font-size: 13px; }
-.gst-total-label { text-align: right; font-weight: 600; }
-.gst-grand-total-row td {
-  background: linear-gradient(135deg, #667eea15, #764ba215);
+  border-radius: 0;
+  width: 18px;
+  min-width: 18px;
+  height: 18px;
+  font-size: 10px;
   font-weight: 700;
-  font-size: 14px;
+  cursor: pointer;
+  line-height: 1;
 }
 
-/* Bottom */
-.gst-bottom-section {
+.gst-summary-section {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 24px;
-  border-top: 1px solid #e5e7eb;
-  padding-top: 16px;
+  gap: 8px;
+  margin-bottom: 8px;
 }
-.gst-bottom-left { flex: 1; }
+
+.gst-summary-left {
+  flex: 1;
+}
+
+.gst-summary-right {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  min-width: 240px;
+}
+
+.gst-total-card {
+  border: 1px solid #cfd5dd;
+  border-radius: 0;
+  overflow: hidden;
+  background: #fff;
+}
+
+.gst-total-card-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 8px;
+  border-bottom: 1px solid #cfd5dd;
+  color: #334155;
+  font-size: 10px;
+}
+
+.gst-total-card-row:last-child {
+  border-bottom: none;
+}
+
+.gst-total-card-rate-row {
+  align-items: center;
+}
+
+.gst-total-card-rate-value {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.gst-total-card-rate-value .gst-table-input.number {
+  width: 72px;
+  max-width: 72px;
+}
+
+.gst-total-card-grand {
+  background: #f8fafc;
+  font-weight: 800;
+}
+
 .gst-words {
-  font-size: 13px;
+  font-size: 10px;
   color: #374151;
-  margin-bottom: 16px;
-  font-style: italic;
+  min-height: 100%;
+  padding: 6px 8px;
+  border: 1px solid #cfd5dd;
+  border-radius: 0;
+  background: #fff;
+  font-style: normal;
 }
 .gst-bank-details {
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  padding: 12px 14px;
-  font-size: 12px;
+  border: 1px solid #cfd5dd;
+  border-radius: 0;
+  padding: 8px;
+  font-size: 10px;
+  background: #fff;
+}
+.gst-bank-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 18px;
 }
 .gst-bank-title {
   font-weight: 700;
   color: #374151;
-  margin-bottom: 8px;
-  font-size: 13px;
+  margin-bottom: 6px;
+  font-size: 10px;
 }
 .gst-bank-row {
   display: flex;
-  gap: 8px;
-  margin-bottom: 3px;
+  gap: 6px;
+  margin-bottom: 2px;
   color: #4b5563;
 }
-.gst-bank-row span { font-weight: 600; min-width: 100px; }
+.gst-bank-row span { font-weight: 700; min-width: 78px; }
 .gst-bottom-right {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-  min-width: 130px;
+  justify-content: flex-end;
+  gap: 6px;
+  min-width: 140px;
 }
 .gst-print-btn, .gst-save-btn {
-  padding: 10px 22px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 0;
+  font-size: 10px;
+  font-weight: 700;
   cursor: pointer;
-  border: none;
+  border: 1px solid #cfd5dd;
   transition: opacity 0.2s;
 }
 .gst-print-btn {
-  background: #f3f4f6;
-  color: #374151;
-  border: 1px solid #d1d5db;
+  background: #f8fafc;
+  color: #0f172a;
 }
-.gst-print-btn:hover { background: #e5e7eb; }
+.gst-print-btn:hover { background: #e2e8f0; }
 .gst-save-btn {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: #0f766e;
   color: #fff;
+  border-color: #0f766e;
 }
 .gst-save-btn:hover { opacity: 0.88; }
+
+.gst-thanks-note {
+  margin-top: 10px;
+  text-align: center;
+  color: #0f766e;
+  font-size: 10px;
+  font-weight: 700;
+}
 
 /* Print */
 @media print {
@@ -306,3 +435,29 @@
   }
 }
 .print-only { display: none; }
+
+@media (max-width: 900px) {
+  .gst-top-section,
+  .gst-to-row {
+    grid-template-columns: 1fr;
+    display: grid;
+  }
+
+  .gst-summary-section {
+    flex-direction: column;
+  }
+
+  .gst-summary-right {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .gst-bank-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .gst-bottom-right {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}

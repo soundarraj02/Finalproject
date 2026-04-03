@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Alert, Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
 import { addVendor, VENDOR_TYPES } from '../utils/vendorData';
-import './AddVendor.css';
 
 const AddVendor = () => {
   const navigate = useNavigate();
@@ -62,49 +62,90 @@ const AddVendor = () => {
   };
 
   return (
-    <div className="add-vendor-page">
-      <div className="add-vendor-container">
-        <div className="form-header">
-          <button className="back-btn" onClick={() => navigate('/vendor/vendor-list')}>🏷️ Vendor</button>
-          <h1>Register Vendor</h1>
-          <button className="nav-btn" onClick={() => navigate('/vendor')}>Vendor › Add Vendor</button>
-        </div>
+    <Container fluid className="py-4">
+      <Card className="shadow-sm border-0">
+        <Card.Header className="bg-white d-flex justify-content-between align-items-center flex-wrap gap-2">
+          <Button variant="outline-primary" onClick={() => navigate('/vendor/vendor-list')}>Vendor</Button>
+          <h4 className="mb-0">Register Vendor</h4>
+          <Button variant="outline-secondary" onClick={() => navigate('/vendor')}>Vendor {'>'} Add Vendor</Button>
+        </Card.Header>
+        <Card.Body>
+          {error && <Alert variant="danger">{error}</Alert>}
+          {success && <Alert variant="success">{success}</Alert>}
 
-        {error && <div className="form-error">{error}</div>}
-        {success && <div className="form-success">{success}</div>}
+          <Form onSubmit={handleSubmit}>
+            <Row className="g-3">
+              <Col md={6}>
+                <Form.Group>
+                  <Form.Label>Vendor Name *</Form.Label>
+                  <Form.Control name="vendorName" value={formData.vendorName} onChange={handleInputChange} />
+                </Form.Group>
+              </Col>
+              <Col md={6}>
+                <Form.Group>
+                  <Form.Label>Vendor Type *</Form.Label>
+                  <Form.Select name="vendorType" value={formData.vendorType} onChange={handleInputChange}>
+                    <option value="">Select Vendor Type</option>
+                    {VENDOR_TYPES.map((type) => <option key={type} value={type}>{type}</option>)}
+                  </Form.Select>
+                </Form.Group>
+              </Col>
+              <Col md={6}>
+                <Form.Group>
+                  <Form.Label>Mobile Number *</Form.Label>
+                  <Form.Control name="mobileNumber" value={formData.mobileNumber} onChange={handleInputChange} />
+                </Form.Group>
+              </Col>
+              <Col md={6}>
+                <Form.Group>
+                  <Form.Label>Email ID *</Form.Label>
+                  <Form.Control name="emailId" value={formData.emailId} onChange={handleInputChange} />
+                </Form.Group>
+              </Col>
+              <Col md={12}>
+                <Form.Group>
+                  <Form.Label>Address *</Form.Label>
+                  <Form.Control as="textarea" rows={3} name="address" value={formData.address} onChange={handleInputChange} />
+                </Form.Group>
+              </Col>
+              <Col md={4}>
+                <Form.Group>
+                  <Form.Label>Current Balance *</Form.Label>
+                  <Form.Control type="number" name="currentBalance" value={formData.currentBalance} onChange={handleInputChange} />
+                </Form.Group>
+              </Col>
+              <Col md={4}>
+                <Form.Group>
+                  <Form.Label>Paid Amount *</Form.Label>
+                  <Form.Control type="number" name="paidAmount" value={formData.paidAmount} onChange={handleInputChange} />
+                </Form.Group>
+              </Col>
+              <Col md={4}>
+                <Form.Group>
+                  <Form.Label>Remaining Amount *</Form.Label>
+                  <Form.Control type="number" name="remainingAmount" value={formData.remainingAmount} onChange={handleInputChange} />
+                </Form.Group>
+              </Col>
+              <Col md={12}>
+                <Form.Group>
+                  <Form.Label>Comments</Form.Label>
+                  <Form.Control name="comments" value={formData.comments} onChange={handleInputChange} />
+                </Form.Group>
+              </Col>
+            </Row>
 
-        <form className="vendor-form" onSubmit={handleSubmit}>
-          <div className="form-section">
-            <h2>Vendor Details</h2>
-            <div className="form-row">
-              <div className="form-group"><label>Vendor Name <span className="required">*</span></label><input name="vendorName" value={formData.vendorName} onChange={handleInputChange} /></div>
-              <div className="form-group"><label>Vendor Type <span className="required">*</span></label><select name="vendorType" value={formData.vendorType} onChange={handleInputChange}><option value="">Select Vendor Type</option>{VENDOR_TYPES.map((type) => <option key={type} value={type}>{type}</option>)}</select></div>
+            <div className="d-flex justify-content-end gap-2 mt-4">
+              <Button type="button" variant="outline-secondary" onClick={() => navigate('/vendor/vendor-list')}>
+                Cancel
+              </Button>
+              <Button type="submit" variant="primary" disabled={isSubmitting}>
+                {isSubmitting ? 'Saving...' : 'Register Vendor'}
+              </Button>
             </div>
-            <div className="form-row">
-              <div className="form-group"><label>Mobile Number <span className="required">*</span></label><input name="mobileNumber" value={formData.mobileNumber} onChange={handleInputChange} /></div>
-              <div className="form-group"><label>Email ID <span className="required">*</span></label><input name="emailId" value={formData.emailId} onChange={handleInputChange} /></div>
-            </div>
-            <div className="form-row full-width">
-              <div className="form-group"><label>Address <span className="required">*</span></label><textarea rows="4" name="address" value={formData.address} onChange={handleInputChange} /></div>
-            </div>
-            <div className="form-row">
-              <div className="form-group"><label>Current Balance <span className="required">*</span></label><input type="number" name="currentBalance" value={formData.currentBalance} onChange={handleInputChange} /></div>
-              <div className="form-group"><label>Paid Amount <span className="required">*</span></label><input type="number" name="paidAmount" value={formData.paidAmount} onChange={handleInputChange} /></div>
-            </div>
-            <div className="form-row">
-              <div className="form-group"><label>Remaining Amount <span className="required">*</span></label><input type="number" name="remainingAmount" value={formData.remainingAmount} onChange={handleInputChange} /></div>
-              <div className="form-group"><label>Comments</label><input name="comments" value={formData.comments} onChange={handleInputChange} /></div>
-            </div>
-          </div>
-
-          <div className="form-actions">
-            <button type="button" className="cancel-btn" onClick={() => navigate('/vendor/vendor-list')}>🏷️ Vendor</button>
-            <button type="submit" className="submit-btn" disabled={isSubmitting}>{isSubmitting ? 'Saving...' : '✅ Register Vendor'}</button>
-            <button type="button" className="nav-submit-btn" onClick={() => navigate('/vendor')}>Vendor › Add Vendor</button>
-          </div>
-        </form>
-      </div>
-    </div>
+          </Form>
+        </Card.Body>
+      </Card>
+    </Container>
   );
 };
 

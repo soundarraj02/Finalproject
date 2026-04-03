@@ -25,9 +25,8 @@ const Login = () => {
       return;
     }
 
-    // Validate password
-    if (!passwordValidation.isValid) {
-      setError('Password does not meet all requirements');
+    if (!password) {
+      setError('Please enter your password');
       setIsLoading(false);
       return;
     }
@@ -123,7 +122,7 @@ const Login = () => {
           <button
             type="submit"
             className="login-button"
-            disabled={isLoading || !email || !password || !passwordValidation.isValid}
+            disabled={isLoading || !email || !password}
           >
             {isLoading ? 'Logging in...' : 'Login'}
           </button>

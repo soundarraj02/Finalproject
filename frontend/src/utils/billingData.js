@@ -1,16 +1,18 @@
 export const OUR_DETAILS = {
-  name: 'Our Company Name',
-  address: '123, Business Street, City, State - 600001',
-  phone: '+91 98765 43210',
-  gstin: '22AAAAA0000A1Z5',
+  name: 'KITKAT SOFTWARE TECHNOLOGIES',
+  address: 'No: 707/1, 1st Floor, Krishna Complex, P.N. Palayam, Coimbatore - 641037',
+  phone: '7018016299, 0422-4957272',
+  gstin: '33AAPFK3628R1ZD',
   bank: {
-    name: 'Account Holder Name',
-    bankName: 'State Bank of India',
-    accountNumber: '1234567890',
-    ifscCode: 'SBIN0001234',
-    branch: 'Main Branch, City',
+    name: 'Kitkat Software Technologies',
+    bankName: 'Federal Bank',
+    accountNumber: '19829000003987',
+    ifscCode: 'FDRL0001962',
+    branch: 'Pappanaickenpalayam',
   },
 };
+
+const INVOICE_DRAFT_KEY = 'billingInvoiceDraft';
 
 export const getBills = () => {
   const data = localStorage.getItem('billingRecords');
@@ -27,6 +29,19 @@ export const addBill = (billData) => {
   bills.unshift(newBill);
   saveBills(bills);
   return newBill;
+};
+
+export const getInvoiceDraft = () => {
+  const draft = localStorage.getItem(INVOICE_DRAFT_KEY);
+  return draft ? JSON.parse(draft) : null;
+};
+
+export const saveInvoiceDraft = (draft) => {
+  localStorage.setItem(INVOICE_DRAFT_KEY, JSON.stringify(draft));
+};
+
+export const clearInvoiceDraft = () => {
+  localStorage.removeItem(INVOICE_DRAFT_KEY);
 };
 
 export const getNextBillId = () => {

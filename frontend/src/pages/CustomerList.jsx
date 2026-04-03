@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Badge, Button, Card, Container, Form, InputGroup, Modal, Pagination, Table } from 'react-bootstrap';
 import { deleteCustomer, getCustomers } from '../utils/customerData';
-import './CustomerList.css';
 
 const CustomerList = () => {
   const navigate = useNavigate();
@@ -42,113 +42,135 @@ const CustomerList = () => {
   };
 
   return (
-    <div className="customer-list-page">
-      <div className="customer-list-container">
-        <div className="list-header">
-          <button className="back-btn" onClick={() => navigate('/customer/add-customer')}>
-            ➕ Add Customer
-          </button>
-          <h1>Manage Customer</h1>
-          <button className="nav-btn" onClick={() => navigate('/customer')}>
-            Customer › Customer List
-          </button>
-        </div>
-
-        {customers.length === 0 ? (
-          <div className="empty-state">
-            <div className="empty-icon">🧾</div>
-            <h2>No Customers Found</h2>
-            <p>Register customers to manage them here.</p>
-            <button className="add-btn" onClick={() => navigate('/customer/add-customer')}>➕ Add Customer</button>
-          </div>
-        ) : (
-          <>
-            <div className="filters-section">
-              <div className="search-box">
-                <input
-                  type="text"
-                  placeholder="Search by client, invoice number, GST IN, or contact..."
-                  value={searchTerm}
-                  onChange={(event) => {
-                    setSearchTerm(event.target.value);
-                    setCurrentPage(1);
-                  }}
-                />
-                <span className="search-icon">🔍</span>
+    <Container fluid className="py-4">
+      <Card className="shadow-sm border-0">
+        <Card.Header className="bg-white d-flex justify-content-between align-items-center flex-wrap gap-2">
+          <Button variant="primary" onClick={() => navigate('/customer/add-customer')}>
+            Add Customer
+          </Button>
+          <h4 className="mb-0">Manage Customer</h4>
+          <Button variant="outline-secondary" onClick={() => navigate('/customer')}>
+            Customer {'>'} Customer List
+          </Button>
+        </Card.Header>
+        <Card.Body>
+          {customers.length === 0 ? (
+            <div className="text-center py-5">
+              <h5>No Customers Found</h5>
+              <p className="text-muted mb-3">Register customers to manage them here.</p>
+              <Button variant="primary" onClick={() => navigate('/customer/add-customer')}>Add Customer</Button>
+            </div>
+          ) : (
+            <>
+              <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                <InputGroup style={{ maxWidth: 420 }}>
+                  <InputGroup.Text>Search</InputGroup.Text>
+                  <Form.Control
+                    type="text"
+                    placeholder="Client, invoice number, GST IN, or contact"
+                    value={searchTerm}
+                    onChange={(event) => {
+                      setSearchTerm(event.target.value);
+                      setCurrentPage(1);
+                    }}
+                  />
+                </InputGroup>
+                <Badge bg="secondary">{paginatedCustomers.length} of {filteredCustomers.length}</Badge>
               </div>
-              <span className="results-count">{paginatedCustomers.length} of {filteredCustomers.length}</span>
-            </div>
 
-            <div className="customer-grid">
-              {paginatedCustomers.map((customer) => (
-                <div key={customer.invoiceNumber} className="customer-card">
-                  <div className="customer-card-top">
-                    <div>
-                      <h3>{customer.clientName}</h3>
-                      <p>{customer.invoiceNumber}</p>
-                    </div>
-                    <span className="customer-chip">{customer.state}</span>
-                  </div>
-                  <div className="customer-detail-grid">
-                    <div className="detail-item"><span className="label">Contact</span><span className="value">{customer.contactNumber}</span></div>
-                    <div className="detail-item"><span className="label">Date</span><span className="value">{customer.date}</span></div>
-                    <div className="detail-item"><span className="label">GST IN</span><span className="value">{customer.gstIn}</span></div>
-                    <div className="detail-item"><span className="label">Address</span><span className="value">{customer.address}</span></div>
-                  </div>
-                  <div className="card-actions">
-                    <button className="view-btn" onClick={() => setSelectedCustomer(customer)}>👁️</button>
-                    <button className="delete-btn" onClick={() => { setSelectedCustomer(customer); setShowDeleteConfirm(true); }}>🗑️</button>
-                  </div>
-                </div>
-              ))}
-            </div>
+              <Table striped bordered hover responsive>
+                <thead>
+                  <tr>
+                    <th>Client</th>
+                    <th>Invoice No</th>
+                    <th>Contact</th>
+                    <th>State</th>
+                    <th>GST IN</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {paginatedCustomers.map((customer) => (
+                    <tr key={customer.invoiceNumber}>
+                      <td>{customer.clientName}</td>
+                      <td>{customer.invoiceNumber}</td>
+                      <td>{customer.contactNumber}</td>
+                      <td>{customer.state}</td>
+                      <td>{customer.gstIn}</td>
+                      <td>{customer.date}</td>
+                      <td className="d-flex gap-2">
+                        <Button size="sm" variant="outline-primary" onClick={() => setSelectedCustomer(customer)}>
+                          View
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline-danger"
+                          onClick={() => {
+                            setSelectedCustomer(customer);
+                            setShowDeleteConfirm(true);
+                          }}
+                        >
+                          Delete
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
 
-            {totalPages > 1 && (
-              <div className="pagination-controls">
-                <button className="pagination-btn" onClick={() => setCurrentPage((prev) => prev - 1)} disabled={currentPage === 1}>← Previous</button>
-                <span className="page-info">Page {currentPage} of {totalPages}</span>
-                <button className="pagination-btn" onClick={() => setCurrentPage((prev) => prev + 1)} disabled={currentPage === totalPages}>Next →</button>
-              </div>
-            )}
-          </>
-        )}
-      </div>
+              {totalPages > 1 && (
+                <Pagination className="justify-content-center">
+                  <Pagination.Prev
+                    onClick={() => setCurrentPage((prev) => prev - 1)}
+                    disabled={currentPage === 1}
+                  />
+                  <Pagination.Item active>{currentPage}</Pagination.Item>
+                  <Pagination.Next
+                    onClick={() => setCurrentPage((prev) => prev + 1)}
+                    disabled={currentPage === totalPages}
+                  />
+                </Pagination>
+              )}
+            </>
+          )}
+        </Card.Body>
+      </Card>
 
-      {selectedCustomer && !showDeleteConfirm && (
-        <div className="modal-overlay" onClick={() => setSelectedCustomer(null)}>
-          <div className="modal-content" onClick={(event) => event.stopPropagation()}>
-            <div className="modal-header">
-              <h2>Customer Details</h2>
-              <button className="close-btn" onClick={() => setSelectedCustomer(null)}>✕</button>
-            </div>
-            <div className="modal-detail-grid">
-              <div className="detail-item"><span className="label">Client Name</span><span className="value">{selectedCustomer.clientName}</span></div>
-              <div className="detail-item"><span className="label">Invoice Number</span><span className="value">{selectedCustomer.invoiceNumber}</span></div>
-              <div className="detail-item"><span className="label">Contact</span><span className="value">{selectedCustomer.contactNumber}</span></div>
-              <div className="detail-item"><span className="label">Date</span><span className="value">{selectedCustomer.date}</span></div>
-              <div className="detail-item"><span className="label">State</span><span className="value">{selectedCustomer.state}</span></div>
-              <div className="detail-item"><span className="label">GST IN</span><span className="value">{selectedCustomer.gstIn}</span></div>
-              <div className="detail-item full-width"><span className="label">Address</span><span className="value">{selectedCustomer.address}</span></div>
-            </div>
-          </div>
-        </div>
-      )}
+      <Modal show={Boolean(selectedCustomer && !showDeleteConfirm)} onHide={() => setSelectedCustomer(null)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Customer Details</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedCustomer && (
+            <Table bordered size="sm">
+              <tbody>
+                <tr><th>Client Name</th><td>{selectedCustomer.clientName}</td></tr>
+                <tr><th>Invoice Number</th><td>{selectedCustomer.invoiceNumber}</td></tr>
+                <tr><th>Contact</th><td>{selectedCustomer.contactNumber}</td></tr>
+                <tr><th>Date</th><td>{selectedCustomer.date}</td></tr>
+                <tr><th>State</th><td>{selectedCustomer.state}</td></tr>
+                <tr><th>GST IN</th><td>{selectedCustomer.gstIn}</td></tr>
+                <tr><th>Address</th><td>{selectedCustomer.address}</td></tr>
+              </tbody>
+            </Table>
+          )}
+        </Modal.Body>
+      </Modal>
 
-      {showDeleteConfirm && selectedCustomer && (
-        <div className="modal-overlay" onClick={() => setShowDeleteConfirm(false)}>
-          <div className="confirm-modal" onClick={(event) => event.stopPropagation()}>
-            <div className="confirm-icon">⚠️</div>
-            <h2>Delete Customer?</h2>
-            <p>Are you sure you want to delete <strong>{selectedCustomer.clientName}</strong>?</p>
-            <p className="warning-text">This action cannot be undone.</p>
-            <div className="confirm-actions">
-              <button className="delete-confirm-btn" onClick={() => handleDelete(selectedCustomer.invoiceNumber)}>Delete</button>
-              <button className="cancel-confirm-btn" onClick={() => setShowDeleteConfirm(false)}>Cancel</button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+      <Modal show={Boolean(showDeleteConfirm && selectedCustomer)} onHide={() => setShowDeleteConfirm(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Delete Customer?</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to delete <strong>{selectedCustomer?.clientName}</strong>? This action cannot be undone.
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowDeleteConfirm(false)}>Cancel</Button>
+          <Button variant="danger" onClick={() => handleDelete(selectedCustomer.invoiceNumber)}>Delete</Button>
+        </Modal.Footer>
+      </Modal>
+    </Container>
   );
 };
 

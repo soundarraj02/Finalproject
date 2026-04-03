@@ -1,57 +1,51 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import CalendarComponent from './CalendarComponent';
-import './Sidebar.css';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { FaChevronDown } from './AdminIcons';
+import './dashboard.css';
 
-const Sidebar = ({ isOpen, selectedMenuItem, onMenuSelect }) => {
+export default function Sidebar({ collapsed = false, avatar = 'A' }) {
   const navigate = useNavigate();
-  
+  const location = useLocation();
+
   const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: '📊' },
-    { id: 'employees', label: 'Employees', icon: '👥', path: '/employee-info' },
-    { id: 'students', label: 'Students', icon: '📚', path: '/student-info' },
-    { id: 'attendance', label: 'Attendance', icon: '🕒', path: '/attendance' },
-    { id: 'lead', label: 'Leads', icon: '📌', path: '/lead' },
-    { id: 'receipt', label: 'Receipt', icon: '💰', path: '/receipt/cash-in/list' },
-    { id: 'customer', label: 'Customer', icon: '🧾', path: '/customer' },
-    { id: 'vendor', label: 'Vendor', icon: '🏷️', path: '/vendor' },
-    { id: 'interview', label: 'Interview', icon: '🎤', path: '/interview' },
-    { id: 'reports', label: 'Reports', icon: '📈', path: '/reports' },
-    { id: 'billing', label: 'Billing', icon: '🧾', path: '/billing' },
-    { id: 'settings', label: 'Settings', icon: '⚙️' },
+    { label: 'Student Info', path: '/student-info' },
+    { label: 'Attendance', path: '/attendance' },
+    { label: 'Customer', path: '/customer' },
+    { label: 'Vendors', path: '/vendor' },
+    { label: 'Leads', path: '/lead' },
+    { label: 'Receipt', path: '/receipt/cash-in/list' },
+    { label: 'Interview', path: '/interview' },
+    { label: 'Reports', path: '/reports' },
+    { label: 'Billing', path: '/billing' },
   ];
 
-  const handleMenuClick = (item) => {
-    if (item.path) {
-      navigate(item.path);
-    } else {
-      onMenuSelect(item.id);
-    }
-  };
-
   return (
-    <aside className={`admin-sidebar ${isOpen ? 'open' : 'closed'}`}>
-      <nav className="sidebar-menu">
-        <ul>
-          {menuItems.map((item) => (
-            <li key={item.id}>
-              <button
-                className={`menu-item ${selectedMenuItem === item.id ? 'active' : ''}`}
-                onClick={() => handleMenuClick(item)}
-              >
-                <span className="menu-icon">{item.icon}</span>
-                <span className="menu-label">{item.label}</span>
-              </button>
-            </li>
-          ))}
-        </ul>
-      </nav>
-
-      <div className="sidebar-calendar">
-        <CalendarComponent />
+    <div className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
+      <div className="logo-section">
+        <img src="/logo.png" alt="logo" />
+        <div>
+          <h5>KITKAT</h5>
+          <small>Software Technologies</small>
+        </div>
       </div>
-    </aside>
-  );
-};
 
-export default Sidebar;
+      <div className="admin-section">
+        <div className="avatar">{avatar}</div>
+        <span>ADMIN</span>
+      </div>
+
+      <ul>
+        {menuItems.map((item) => (
+          <li
+            key={item.label}
+            onClick={() => navigate(item.path)}
+            className={location.pathname.startsWith(item.path) ? 'active' : ''}
+          >
+            <span>{item.label}</span>
+            <FaChevronDown />
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+

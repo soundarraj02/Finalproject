@@ -1,0 +1,71 @@
+body {
+  background: #f4f6f9;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.admin-layout-shell {
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 250px;
+  height: 100vh;
+  background: #fff;
+  border-right: 1px solid #e0e0e0;
+  padding: 15px;
+}
+
+.logo h5 {
+  color: #4a6cf7;
+  margin: 0;
+}
+
+.logo small {
+  color: #6b7280;
+}
+
+.admin-text {
+  margin-top: 20px;
+  font-weight: bold;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar ul li {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.sidebar ul li:hover {
+  background: #f1f3f5;
+}
+
+.topbar {
+  height: 60px;
+  background: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.topbar input {
+  background: #f1f3f5;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 20px;
+}
+
+.topbar img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.main-content {
+  width: 100%;
+}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { Alert, Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
 import { addCustomer, getNextInvoiceNumber, INDIAN_STATES } from '../utils/customerData';
-import './AddCustomer.css';
 
 const AddCustomer = () => {
   const navigate = useNavigate();
@@ -66,75 +66,106 @@ const AddCustomer = () => {
   };
 
   return (
-    <div className="add-customer-page">
-      <div className="add-customer-container">
-        <div className="form-header">
-          <button className="back-btn" onClick={() => navigate('/customer')}>
-            🧾 GST Invoice
-          </button>
-          <h1>Register Customer</h1>
-          <button className="nav-btn" onClick={() => navigate('/customer')}>
-            Customer › Add Customer
-          </button>
-        </div>
+    <Container fluid className="py-4">
+      <Card className="shadow-sm border-0">
+        <Card.Header className="bg-white d-flex justify-content-between align-items-center flex-wrap gap-2">
+          <Button variant="outline-primary" onClick={() => navigate('/customer')}>
+            GST Invoice
+          </Button>
+          <h4 className="mb-0">Register Customer</h4>
+          <Button variant="outline-secondary" onClick={() => navigate('/customer')}>
+            Customer {'>'} Add Customer
+          </Button>
+        </Card.Header>
+        <Card.Body>
+          {error && <Alert variant="danger">{error}</Alert>}
+          {success && <Alert variant="success">{success}</Alert>}
 
-        {error && <div className="form-error">{error}</div>}
-        {success && <div className="form-success">{success}</div>}
+          <Form onSubmit={handleSubmit}>
+            <Row className="g-3">
+              <Col md={6}>
+                <Form.Group>
+                  <Form.Label>Client Name *</Form.Label>
+                  <Form.Control
+                    name="clientName"
+                    value={formData.clientName}
+                    onChange={handleInputChange}
+                    placeholder="Enter client name"
+                  />
+                </Form.Group>
+              </Col>
+              <Col md={6}>
+                <Form.Group>
+                  <Form.Label>Contact Number *</Form.Label>
+                  <Form.Control
+                    name="contactNumber"
+                    value={formData.contactNumber}
+                    onChange={handleInputChange}
+                    placeholder="Enter 10-digit contact number"
+                  />
+                </Form.Group>
+              </Col>
+              <Col md={12}>
+                <Form.Group>
+                  <Form.Label>Address *</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={3}
+                    name="address"
+                    value={formData.address}
+                    onChange={handleInputChange}
+                    placeholder="Enter address"
+                  />
+                </Form.Group>
+              </Col>
+              <Col md={6}>
+                <Form.Group>
+                  <Form.Label>Date *</Form.Label>
+                  <Form.Control type="date" name="date" value={formData.date} onChange={handleInputChange} />
+                </Form.Group>
+              </Col>
+              <Col md={6}>
+                <Form.Group>
+                  <Form.Label>State *</Form.Label>
+                  <Form.Select name="state" value={formData.state} onChange={handleInputChange}>
+                    <option value="">Select State</option>
+                    {INDIAN_STATES.map((state) => (
+                      <option key={state} value={state}>{state}</option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+              </Col>
+              <Col md={6}>
+                <Form.Group>
+                  <Form.Label>Invoice Number *</Form.Label>
+                  <Form.Control name="invoiceNumber" value={formData.invoiceNumber} readOnly />
+                </Form.Group>
+              </Col>
+              <Col md={6}>
+                <Form.Group>
+                  <Form.Label>GST IN *</Form.Label>
+                  <Form.Control
+                    name="gstIn"
+                    value={formData.gstIn}
+                    onChange={handleInputChange}
+                    placeholder="Enter GST IN"
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
 
-        <form className="customer-form" onSubmit={handleSubmit}>
-          <div className="form-section">
-            <h2>Customer Details</h2>
-            <div className="form-row">
-              <div className="form-group">
-                <label>Client Name <span className="required">*</span></label>
-                <input name="clientName" value={formData.clientName} onChange={handleInputChange} placeholder="Enter client name" />
-              </div>
-              <div className="form-group">
-                <label>Contact Number <span className="required">*</span></label>
-                <input name="contactNumber" value={formData.contactNumber} onChange={handleInputChange} placeholder="Enter 10-digit contact number" />
-              </div>
+            <div className="d-flex justify-content-end gap-2 mt-4">
+              <Button variant="outline-secondary" type="button" onClick={() => navigate('/customer')}>
+                Cancel
+              </Button>
+              <Button variant="primary" type="submit" disabled={isSubmitting}>
+                {isSubmitting ? 'Saving...' : 'Register Customer'}
+              </Button>
             </div>
-            <div className="form-row full-width">
-              <div className="form-group">
-                <label>Address <span className="required">*</span></label>
-                <textarea name="address" rows="4" value={formData.address} onChange={handleInputChange} placeholder="Enter address" />
-              </div>
-            </div>
-            <div className="form-row">
-              <div className="form-group">
-                <label>Date <span className="required">*</span></label>
-                <input type="date" name="date" value={formData.date} onChange={handleInputChange} />
-              </div>
-              <div className="form-group">
-                <label>State <span className="required">*</span></label>
-                <select name="state" value={formData.state} onChange={handleInputChange}>
-                  <option value="">Select State</option>
-                  {INDIAN_STATES.map((state) => (
-                    <option key={state} value={state}>{state}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-            <div className="form-row">
-              <div className="form-group">
-                <label>Invoice Number <span className="required">*</span></label>
-                <input className="readonly-input" name="invoiceNumber" value={formData.invoiceNumber} readOnly />
-              </div>
-              <div className="form-group">
-                <label>GST IN <span className="required">*</span></label>
-                <input name="gstIn" value={formData.gstIn} onChange={handleInputChange} placeholder="Enter GST IN" />
-              </div>
-            </div>
-          </div>
-
-          <div className="form-actions">
-            <button type="button" className="cancel-btn" onClick={() => navigate('/customer')}>🧾 GST Invoice</button>
-            <button type="submit" className="submit-btn" disabled={isSubmitting}>{isSubmitting ? 'Saving...' : '✅ Register Customer'}</button>
-            <button type="button" className="nav-submit-btn" onClick={() => navigate('/customer')}>Customer › Add Customer</button>
-          </div>
-        </form>
-      </div>
-    </div>
+          </Form>
+        </Card.Body>
+      </Card>
+    </Container>
   );
 };
 

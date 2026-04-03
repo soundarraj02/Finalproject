@@ -4,7 +4,7 @@ const Bill = require('../models/Bill');
 const { getNextId } = require('../models/Counter');
 const { protect } = require('../middleware/auth');
 
-router.get('/', async (req, res) => {
+router.get('/', protect, async (req, res) => {
   try {
     const { type } = req.query;
     const filter = type ? { type } : {};
@@ -15,7 +15,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.post('/', async (req, res) => {
+router.post('/', protect, async (req, res) => {
   try {
     const billId = await getNextId('bill', 'BIL');
     const bill = await Bill.create({ ...req.body, billId });
@@ -25,7 +25,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', protect, async (req, res) => {
   try {
     const bill = await Bill.findOneAndDelete({ billId: req.params.id });
     if (!bill) return res.status(404).json({ message: 'Bill not found' });

@@ -27,41 +27,28 @@ const Billing = () => {
     fetchBills();
   }, []);
 
-  const cards = [
+  const invoiceTypes = [
     {
-      label: 'Total Bills',
-      value: bills.length,
-      icon: '🧾',
+      title: 'GST Bill',
+      path: '/billing/gst',
+      description: 'Create a tax invoice with Date, Invoice No, GSTIN, client details, item table, subtotal, IGST, total, total in words, and bank details.',
+      note: 'Use this when the invoice must include GST details.',
       color: '#667eea',
     },
     {
-      label: 'GST Bills',
-      value: bills.filter((b) => b.type === 'gst').length,
-      icon: '📋',
+      title: 'Non-GST Bill',
+      path: '/billing/non-gst',
+      description: 'Create an estimated bill with Date, Invoice No, client details, item table, subtotal, IGST, total, total in words, and bank details.',
+      note: 'Use this when the invoice should be issued without GST.',
       color: '#10b981',
-    },
-    {
-      label: 'Non-GST Bills',
-      value: bills.filter((b) => b.type === 'non-gst').length,
-      icon: '📄',
-      color: '#f59e0b',
     },
   ];
 
-  const actions = [
-    {
-      label: '📋 GST Bill',
-      path: '/billing/gst',
-      desc: 'Create a GST Tax Invoice',
-      color: '#667eea',
-    },
-    {
-      label: '📄 Non-GST Bill',
-      path: '/billing/non-gst',
-      desc: 'Create an Estimated Bill (Non-GST)',
-      color: '#10b981',
-    },
-  ];
+  const totals = {
+    total: bills.length,
+    gst: bills.filter((bill) => bill.type === 'gst').length,
+    nonGst: bills.filter((bill) => bill.type === 'non-gst').length,
+  };
 
   return (
     <div className="billing-landing">
@@ -69,41 +56,63 @@ const Billing = () => {
         <button className="billing-back-btn" onClick={() => navigate('/dashboard')}>
           ← Dashboard
         </button>
-        <h1>Billing Management</h1>
+        <div className="billing-header-copy">
+          <p className="billing-eyebrow">Billing</p>
+          <h1>Choose the bill type</h1>
+        </div>
+        <button className="billing-master-btn" onClick={() => navigate('/student-info/master/invoice-no')}>
+          Master &gt; Invoice No
+        </button>
       </div>
 
-      {error && <div style={{ color: 'red', marginBottom: 12 }}>{error}</div>}
-      {loading ? (
-        <div>Loading bills...</div>
-      ) : (
-        <div className="billing-stat-cards">
-          {cards.map((c) => (
-            <div key={c.label} className="billing-stat-card" style={{ borderLeft: `5px solid ${c.color}` }}>
-              <span className="billing-stat-icon">{c.icon}</span>
-              <div>
-                <div className="billing-stat-value">{c.value}</div>
-                <div className="billing-stat-label">{c.label}</div>
+      {error && <div className="billing-error-banner">{error}</div>}
+
+      <div className="billing-content-grid">
+        <section className="billing-note-panel">
+          <h2>Billing notes</h2>
+          <p>The invoice page should provide client selection, row-based item entry, subtotal, IGST, total, print, save, total in words, and bank account details.</p>
+          {loading ? (
+            <div className="billing-summary loading">Loading bill summary...</div>
+          ) : (
+            <div className="billing-summary">
+              <div className="billing-summary-item">
+                <span>Total bills</span>
+                <strong>{totals.total}</strong>
+              </div>
+              <div className="billing-summary-item">
+                <span>GST bills</span>
+                <strong>{totals.gst}</strong>
+              </div>
+              <div className="billing-summary-item">
+                <span>Non-GST bills</span>
+                <strong>{totals.nonGst}</strong>
               </div>
             </div>
+          )}
+        </section>
+
+        <div className="billing-action-cards">
+          {invoiceTypes.map((invoiceType) => (
+            <article
+              key={invoiceType.title}
+              className="billing-action-card"
+              style={{ '--billing-accent': invoiceType.color }}
+            >
+              <div className="billing-action-head">
+                <div>
+                  <p className="billing-card-tag">Invoice</p>
+                  <h2 className="billing-action-title">{invoiceType.title}</h2>
+                </div>
+                <span className="billing-action-accent" />
+              </div>
+              <p className="billing-action-desc">{invoiceType.description}</p>
+              <p className="billing-action-note">{invoiceType.note}</p>
+              <button className="billing-open-btn" onClick={() => navigate(invoiceType.path)}>
+                Open {invoiceType.title}
+              </button>
+            </article>
           ))}
         </div>
-      )}
-
-      <div className="billing-action-cards">
-        {actions.map((a) => (
-          <div
-            key={a.label}
-            className="billing-action-card"
-            style={{ borderTop: `4px solid ${a.color}` }}
-            onClick={() => navigate(a.path)}
-          >
-            <div className="billing-action-icon">{a.label.split(' ')[0]}</div>
-            <div>
-              <div className="billing-action-title">{a.label.slice(3)}</div>
-              <div className="billing-action-desc">{a.desc}</div>
-            </div>
-          </div>
-        ))}
       </div>
     </div>
   );

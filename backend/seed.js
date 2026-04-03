@@ -33,7 +33,7 @@ const seed = async () => {
 
     const admin = await User.create({
       name: 'Admin User',
-      email: 'admin@finalproject.com',
+      email: 'admin@gmail.com',
       password: 'Admin@123',
       role: 'admin',
     });
@@ -185,7 +185,7 @@ const seed = async () => {
     ]);
 
     console.log('Seed completed');
-    console.log('Admin login: admin@finalproject.com / Admin@123');
+    console.log('Admin login: admin@gmail.com / Admin@123');
     process.exit(0);
   } catch (error) {
     console.error('Seed failed:', error);

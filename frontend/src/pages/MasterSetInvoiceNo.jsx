@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getNextInvoiceNumber, INDIAN_STATES } from '../utils/customerData';
+import { saveInvoiceDraft } from '../utils/billingData';
 import './MasterSetId.css';
 
 const MasterSetInvoiceNo = () => {
@@ -14,6 +15,7 @@ const MasterSetInvoiceNo = () => {
     invoice: '',
     gstin: '',
   });
+  const [message, setMessage] = useState('');
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -21,13 +23,21 @@ const MasterSetInvoiceNo = () => {
 
   const handleSetId = () => {
     const newInvoice = getNextInvoiceNumber();
-    setFormData((prev) => ({ ...prev, invoice: newInvoice }));
+    const draft = { ...formData, invoice: newInvoice };
+    setFormData(draft);
+    saveInvoiceDraft(draft);
+    setMessage(`Invoice number ${newInvoice} is ready for the GST bill.`);
+  };
+
+  const openGstInvoice = () => {
+    saveInvoiceDraft(formData);
+    navigate('/billing/gst', { state: { invoiceDraft: formData } });
   };
 
   return (
     <div className="master-set-page">
       <div className="master-invoice-topline">
-        <button className="master-left-btn" onClick={() => navigate('/billing/gst')}>
+        <button className="master-left-btn" onClick={openGstInvoice}>
           🧾 GST Invoice
         </button>
       </div>
@@ -44,6 +54,7 @@ const MasterSetInvoiceNo = () => {
       <div className="master-set-card">
         <h2>Set Invoice ID</h2>
         <p>Create invoice details and generate invoice number.</p>
+        {message && <div className="master-success-banner">{message}</div>}
 
         <div className="master-form-grid">
           <div className="master-form-group">

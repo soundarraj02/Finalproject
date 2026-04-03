@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Badge, Button, Card, Container, Form, InputGroup, Modal, Pagination, Table } from 'react-bootstrap';
 import { deleteVendor, getVendors } from '../utils/vendorData';
-import './VendorList.css';
 
 const VendorList = () => {
   const navigate = useNavigate();
@@ -43,105 +43,127 @@ const VendorList = () => {
   };
 
   return (
-    <div className="vendor-list-page">
-      <div className="vendor-list-container">
-        <div className="list-header">
-          <button className="back-btn" onClick={() => navigate('/vendor/add-vendor')}>➕ Create</button>
-          <h1>Manage Vendor</h1>
-          <button className="nav-btn" onClick={() => navigate('/vendor')}>Vendors › Manage Vendor</button>
-        </div>
-
-        {vendors.length === 0 ? (
-          <div className="empty-state">
-            <div className="empty-icon">🏷️</div>
-            <h2>No Vendors Found</h2>
-            <p>Add vendor records to manage them here.</p>
-            <button className="add-btn" onClick={() => navigate('/vendor/add-vendor')}>➕ Add Vendor</button>
-          </div>
-        ) : (
-          <>
-            <div className="filters-section">
-              <div className="search-box">
-                <input type="text" placeholder="Search by vendor, type, mobile, email, or ID..." value={searchTerm} onChange={(event) => { setSearchTerm(event.target.value); setCurrentPage(1); }} />
-                <span className="search-icon">🔍</span>
+    <Container fluid className="py-4">
+      <Card className="shadow-sm border-0">
+        <Card.Header className="bg-white d-flex justify-content-between align-items-center flex-wrap gap-2">
+          <Button variant="primary" onClick={() => navigate('/vendor/add-vendor')}>Create</Button>
+          <h4 className="mb-0">Manage Vendor</h4>
+          <Button variant="outline-secondary" onClick={() => navigate('/vendor')}>Vendors {'>'} Manage Vendor</Button>
+        </Card.Header>
+        <Card.Body>
+          {vendors.length === 0 ? (
+            <div className="text-center py-5">
+              <h5>No Vendors Found</h5>
+              <p className="text-muted mb-3">Add vendor records to manage them here.</p>
+              <Button variant="primary" onClick={() => navigate('/vendor/add-vendor')}>Add Vendor</Button>
+            </div>
+          ) : (
+            <>
+              <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                <InputGroup style={{ maxWidth: 420 }}>
+                  <InputGroup.Text>Search</InputGroup.Text>
+                  <Form.Control
+                    type="text"
+                    placeholder="Vendor, type, mobile, email, or ID"
+                    value={searchTerm}
+                    onChange={(event) => {
+                      setSearchTerm(event.target.value);
+                      setCurrentPage(1);
+                    }}
+                  />
+                </InputGroup>
+                <Badge bg="secondary">{paginatedVendors.length} of {filteredVendors.length}</Badge>
               </div>
-              <span className="results-count">{paginatedVendors.length} of {filteredVendors.length}</span>
-            </div>
 
-            <div className="vendor-grid">
-              {paginatedVendors.map((vendor) => (
-                <div key={vendor.vendorId} className="vendor-card">
-                  <div className="vendor-card-top">
-                    <div>
-                      <h3>{vendor.vendorName}</h3>
-                      <p>{vendor.vendorId}</p>
-                    </div>
-                    <span className="vendor-chip">{vendor.vendorType}</span>
-                  </div>
-                  <div className="vendor-detail-grid">
-                    <div className="detail-item"><span className="label">Mobile</span><span className="value">{vendor.mobileNumber}</span></div>
-                    <div className="detail-item"><span className="label">Email</span><span className="value">{vendor.emailId}</span></div>
-                    <div className="detail-item"><span className="label">Current Balance</span><span className="value">₹{Number(vendor.currentBalance).toLocaleString()}</span></div>
-                    <div className="detail-item"><span className="label">Paid Amount</span><span className="value">₹{Number(vendor.paidAmount).toLocaleString()}</span></div>
-                    <div className="detail-item"><span className="label">Remaining Amount</span><span className="value">₹{Number(vendor.remainingAmount).toLocaleString()}</span></div>
-                  </div>
-                  {vendor.comments && <p className="vendor-comments">{vendor.comments}</p>}
-                  <div className="card-actions">
-                    <button className="view-btn" onClick={() => setSelectedVendor(vendor)}>👁️</button>
-                    <button className="delete-btn" onClick={() => { setSelectedVendor(vendor); setShowDeleteConfirm(true); }}>🗑️</button>
-                  </div>
-                </div>
-              ))}
-            </div>
+              <Table striped bordered hover responsive>
+                <thead>
+                  <tr>
+                    <th>Vendor</th>
+                    <th>ID</th>
+                    <th>Type</th>
+                    <th>Mobile</th>
+                    <th>Email</th>
+                    <th>Remaining Amount</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {paginatedVendors.map((vendor) => (
+                    <tr key={vendor.vendorId}>
+                      <td>{vendor.vendorName}</td>
+                      <td>{vendor.vendorId}</td>
+                      <td>{vendor.vendorType}</td>
+                      <td>{vendor.mobileNumber}</td>
+                      <td>{vendor.emailId}</td>
+                      <td>Rs. {Number(vendor.remainingAmount).toLocaleString()}</td>
+                      <td className="d-flex gap-2">
+                        <Button size="sm" variant="outline-primary" onClick={() => setSelectedVendor(vendor)}>
+                          View
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline-danger"
+                          onClick={() => {
+                            setSelectedVendor(vendor);
+                            setShowDeleteConfirm(true);
+                          }}
+                        >
+                          Delete
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
 
-            {totalPages > 1 && (
-              <div className="pagination-controls">
-                <button className="pagination-btn" onClick={() => setCurrentPage((prev) => prev - 1)} disabled={currentPage === 1}>← Previous</button>
-                <span className="page-info">Page {currentPage} of {totalPages}</span>
-                <button className="pagination-btn" onClick={() => setCurrentPage((prev) => prev + 1)} disabled={currentPage === totalPages}>Next →</button>
-              </div>
-            )}
-          </>
-        )}
-      </div>
+              {totalPages > 1 && (
+                <Pagination className="justify-content-center">
+                  <Pagination.Prev onClick={() => setCurrentPage((prev) => prev - 1)} disabled={currentPage === 1} />
+                  <Pagination.Item active>{currentPage}</Pagination.Item>
+                  <Pagination.Next onClick={() => setCurrentPage((prev) => prev + 1)} disabled={currentPage === totalPages} />
+                </Pagination>
+              )}
+            </>
+          )}
+        </Card.Body>
+      </Card>
 
-      {selectedVendor && !showDeleteConfirm && (
-        <div className="modal-overlay" onClick={() => setSelectedVendor(null)}>
-          <div className="modal-content" onClick={(event) => event.stopPropagation()}>
-            <div className="modal-header">
-              <h2>Vendor Details</h2>
-              <button className="close-btn" onClick={() => setSelectedVendor(null)}>✕</button>
-            </div>
-            <div className="modal-detail-grid">
-              <div className="detail-item"><span className="label">Vendor Name</span><span className="value">{selectedVendor.vendorName}</span></div>
-              <div className="detail-item"><span className="label">Vendor Type</span><span className="value">{selectedVendor.vendorType}</span></div>
-              <div className="detail-item"><span className="label">Mobile</span><span className="value">{selectedVendor.mobileNumber}</span></div>
-              <div className="detail-item"><span className="label">Email</span><span className="value">{selectedVendor.emailId}</span></div>
-              <div className="detail-item full-width"><span className="label">Address</span><span className="value">{selectedVendor.address}</span></div>
-              <div className="detail-item"><span className="label">Current Balance</span><span className="value">₹{Number(selectedVendor.currentBalance).toLocaleString()}</span></div>
-              <div className="detail-item"><span className="label">Paid Amount</span><span className="value">₹{Number(selectedVendor.paidAmount).toLocaleString()}</span></div>
-              <div className="detail-item"><span className="label">Remaining Amount</span><span className="value">₹{Number(selectedVendor.remainingAmount).toLocaleString()}</span></div>
-            </div>
-            {selectedVendor.comments && <p className="vendor-comments">{selectedVendor.comments}</p>}
-          </div>
-        </div>
-      )}
+      <Modal show={Boolean(selectedVendor && !showDeleteConfirm)} onHide={() => setSelectedVendor(null)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Vendor Details</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedVendor && (
+            <Table bordered size="sm">
+              <tbody>
+                <tr><th>Vendor Name</th><td>{selectedVendor.vendorName}</td></tr>
+                <tr><th>Vendor Type</th><td>{selectedVendor.vendorType}</td></tr>
+                <tr><th>Mobile</th><td>{selectedVendor.mobileNumber}</td></tr>
+                <tr><th>Email</th><td>{selectedVendor.emailId}</td></tr>
+                <tr><th>Address</th><td>{selectedVendor.address}</td></tr>
+                <tr><th>Current Balance</th><td>Rs. {Number(selectedVendor.currentBalance).toLocaleString()}</td></tr>
+                <tr><th>Paid Amount</th><td>Rs. {Number(selectedVendor.paidAmount).toLocaleString()}</td></tr>
+                <tr><th>Remaining Amount</th><td>Rs. {Number(selectedVendor.remainingAmount).toLocaleString()}</td></tr>
+                <tr><th>Comments</th><td>{selectedVendor.comments || '-'}</td></tr>
+              </tbody>
+            </Table>
+          )}
+        </Modal.Body>
+      </Modal>
 
-      {showDeleteConfirm && selectedVendor && (
-        <div className="modal-overlay" onClick={() => setShowDeleteConfirm(false)}>
-          <div className="confirm-modal" onClick={(event) => event.stopPropagation()}>
-            <div className="confirm-icon">⚠️</div>
-            <h2>Delete Vendor?</h2>
-            <p>Are you sure you want to delete <strong>{selectedVendor.vendorName}</strong>?</p>
-            <p className="warning-text">This action cannot be undone.</p>
-            <div className="confirm-actions">
-              <button className="delete-confirm-btn" onClick={() => handleDelete(selectedVendor.vendorId)}>Delete</button>
-              <button className="cancel-confirm-btn" onClick={() => setShowDeleteConfirm(false)}>Cancel</button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+      <Modal show={Boolean(showDeleteConfirm && selectedVendor)} onHide={() => setShowDeleteConfirm(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Delete Vendor?</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to delete <strong>{selectedVendor?.vendorName}</strong>? This action cannot be undone.
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowDeleteConfirm(false)}>Cancel</Button>
+          <Button variant="danger" onClick={() => handleDelete(selectedVendor.vendorId)}>Delete</Button>
+        </Modal.Footer>
+      </Modal>
+    </Container>
   );
 };
 
