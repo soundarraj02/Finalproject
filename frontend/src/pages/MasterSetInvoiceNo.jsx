@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getNextInvoiceNumber, INDIAN_STATES } from '../utils/customerData';
+import { getNextInvoiceNumber, INDIAN_STATES, syncInvoiceCounter } from '../utils/customerData';
 import { saveInvoiceDraft } from '../utils/billingData';
 import './MasterSetId.css';
 
@@ -22,11 +22,22 @@ const MasterSetInvoiceNo = () => {
   };
 
   const handleSetId = () => {
-    const newInvoice = getNextInvoiceNumber();
+    const manualInvoice = formData.invoice.trim();
+    const hasManualInvoice = manualInvoice.length > 0;
+    const newInvoice = hasManualInvoice ? manualInvoice : getNextInvoiceNumber();
+
+    if (hasManualInvoice) {
+      syncInvoiceCounter(newInvoice);
+    }
+
     const draft = { ...formData, invoice: newInvoice };
     setFormData(draft);
     saveInvoiceDraft(draft);
-    setMessage(`Invoice number ${newInvoice} is ready for the GST bill.`);
+    setMessage(
+      hasManualInvoice
+        ? `Manual invoice number ${newInvoice} is set. Next auto ID will follow this number.`
+        : `Invoice number ${newInvoice} is ready for the GST bill.`
+    );
   };
 
   const openGstInvoice = () => {
@@ -106,7 +117,11 @@ const MasterSetInvoiceNo = () => {
 
           <div className="master-form-group">
             <label>Invoice</label>
-            <input value={formData.invoice} readOnly placeholder="Auto-generated on Set ID" />
+            <input
+              value={formData.invoice}
+              onChange={(e) => handleChange('invoice', e.target.value)}
+              placeholder="Auto-generated or enter manually"
+            />
           </div>
 
           <div className="master-form-group">

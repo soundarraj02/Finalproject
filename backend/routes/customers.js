@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const Bill = require('../models/Bill');
 const Customer = require('../models/Customer');
 const { getNextId } = require('../models/Counter');
 const { protect } = require('../middleware/auth');
@@ -41,7 +42,22 @@ router.delete('/:id', protect, async (req, res) => {
   try {
     const customer = await Customer.findOneAndDelete({ customerId: req.params.id });
     if (!customer) return res.status(404).json({ message: 'Customer not found' });
-    res.json({ message: 'Customer deleted' });
+
+    const billFilters = [];
+
+    if (customer.clientName) {
+      billFilters.push({ clientName: customer.clientName });
+    }
+
+    if (customer.invoiceNumber) {
+      billFilters.push({ invoiceNo: customer.invoiceNumber });
+    }
+
+    if (billFilters.length > 0) {
+      await Bill.deleteMany({ $or: billFilters });
+    }
+
+    res.json({ message: 'Customer and related bills deleted' });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

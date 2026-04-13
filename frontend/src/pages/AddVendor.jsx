@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Alert, Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
-import { addVendor, VENDOR_TYPES } from '../utils/vendorData';
+import { addVendor } from '../services/vendorService';
+import { VENDOR_TYPES } from '../utils/vendorData';
 
 const AddVendor = () => {
   const navigate = useNavigate();
@@ -51,7 +52,23 @@ const AddVendor = () => {
     }
 
     try {
-      addVendor(formData);
+      await addVendor({
+        vendorName: formData.vendorName,
+        vendorType: formData.vendorType,
+        mobileNumber: formData.mobileNumber,
+        emailId: formData.emailId,
+        currentBalance: Number(formData.currentBalance) || 0,
+        paidAmount: Number(formData.paidAmount) || 0,
+        remainingAmount: Number(formData.remainingAmount) || 0,
+        comments: formData.comments,
+
+        // Keep aliases for older consumers that read legacy field names.
+        phone: formData.mobileNumber,
+        email: formData.emailId,
+        address: formData.address,
+        balance: Number(formData.remainingAmount) || 0,
+        notes: formData.comments,
+      });
       setSuccess('Vendor registered successfully. Redirecting...');
       setTimeout(() => navigate('/vendor/vendor-list'), 900);
     } catch {

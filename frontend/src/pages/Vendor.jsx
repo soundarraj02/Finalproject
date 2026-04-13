@@ -1,11 +1,24 @@
-import { useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getVendors } from '../utils/vendorData';
+import { getVendors } from '../services/vendorService';
 import './Vendor.css';
 
 const Vendor = () => {
   const navigate = useNavigate();
-  const vendors = useMemo(() => getVendors(), []);
+  const [vendors, setVendors] = useState([]);
+
+  useEffect(() => {
+    const loadVendors = async () => {
+      try {
+        const data = await getVendors();
+        setVendors(Array.isArray(data) ? data : []);
+      } catch {
+        setVendors([]);
+      }
+    };
+
+    loadVendors();
+  }, []);
 
   return (
     <div className="vendor-page">

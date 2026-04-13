@@ -1,7 +1,17 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Badge, Button, Card, Container, Form, InputGroup, Modal, Pagination, Table } from 'react-bootstrap';
-import { deleteVendor, getVendors } from '../utils/vendorData';
+import { deleteVendor, getVendors } from '../services/vendorService';
+
+const toUiVendor = (vendor) => ({
+  ...vendor,
+  mobileNumber: vendor.mobileNumber || vendor.phone || '',
+  emailId: vendor.emailId || vendor.email || '',
+  currentBalance: vendor.currentBalance ?? vendor.balance ?? 0,
+  paidAmount: vendor.paidAmount ?? 0,
+  remainingAmount: vendor.remainingAmount ?? vendor.balance ?? 0,
+  comments: vendor.comments || vendor.notes || '',
+});
 
 const VendorList = () => {
   const navigate = useNavigate();
@@ -10,14 +20,22 @@ const VendorList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedVendor, setSelectedVendor] = useState(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [error, setError] = useState('');
   const itemsPerPage = 6;
 
   useEffect(() => {
-    setVendors(getVendors());
+    loadVendors();
   }, []);
 
-  const loadVendors = () => {
-    setVendors(getVendors());
+  const loadVendors = async () => {
+    try {
+      const data = await getVendors();
+      setVendors(Array.isArray(data) ? data.map(toUiVendor) : []);
+      setError('');
+    } catch {
+      setError('Failed to load vendors. Please refresh and try again.');
+      setVendors([]);
+    }
   };
 
   const filteredVendors = useMemo(() => vendors.filter((vendor) => {
@@ -32,13 +50,17 @@ const VendorList = () => {
   const totalPages = Math.ceil(filteredVendors.length / itemsPerPage);
   const paginatedVendors = filteredVendors.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
-  const handleDelete = (vendorId) => {
-    deleteVendor(vendorId);
-    setShowDeleteConfirm(false);
-    setSelectedVendor(null);
-    loadVendors();
-    if (paginatedVendors.length === 1 && currentPage > 1) {
-      setCurrentPage((prev) => prev - 1);
+  const handleDelete = async (vendorId) => {
+    try {
+      await deleteVendor(vendorId);
+      setShowDeleteConfirm(false);
+      setSelectedVendor(null);
+      await loadVendors();
+      if (paginatedVendors.length === 1 && currentPage > 1) {
+        setCurrentPage((prev) => prev - 1);
+      }
+    } catch {
+      setError('Failed to delete vendor. Please try again.');
     }
   };
 
@@ -51,6 +73,7 @@ const VendorList = () => {
           <Button variant="outline-secondary" onClick={() => navigate('/vendor')}>Vendors {'>'} Manage Vendor</Button>
         </Card.Header>
         <Card.Body>
+          {error && <p className="text-danger mb-3">{error}</p>}
           {vendors.length === 0 ? (
             <div className="text-center py-5">
               <h5>No Vendors Found</h5>

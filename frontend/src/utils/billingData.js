@@ -31,6 +31,22 @@ export const addBill = (billData) => {
   return newBill;
 };
 
+export const deleteBillsByCustomer = ({ clientName = '', invoiceNo = '' }) => {
+  const normalizedClientName = clientName.trim().toLowerCase();
+  const normalizedInvoiceNo = invoiceNo.trim().toLowerCase();
+  const filteredBills = getBills().filter((bill) => {
+    const billClientName = (bill.clientName || '').trim().toLowerCase();
+    const billInvoiceNo = (bill.invoiceNo || '').trim().toLowerCase();
+
+    const matchesClient = normalizedClientName && billClientName === normalizedClientName;
+    const matchesInvoice = normalizedInvoiceNo && billInvoiceNo === normalizedInvoiceNo;
+
+    return !matchesClient && !matchesInvoice;
+  });
+
+  saveBills(filteredBills);
+};
+
 export const getInvoiceDraft = () => {
   const draft = localStorage.getItem(INVOICE_DRAFT_KEY);
   return draft ? JSON.parse(draft) : null;
@@ -42,6 +58,36 @@ export const saveInvoiceDraft = (draft) => {
 
 export const clearInvoiceDraft = () => {
   localStorage.removeItem(INVOICE_DRAFT_KEY);
+};
+
+export const clearInvoiceDraftIfMatches = ({ clientName = '', invoiceNo = '' }) => {
+  const draft = getInvoiceDraft();
+
+  if (!draft) {
+    return;
+  }
+
+  const normalizedClientName = clientName.trim().toLowerCase();
+  const normalizedInvoiceNo = invoiceNo.trim().toLowerCase();
+  const draftClientName = (draft.clientName || '').trim().toLowerCase();
+  const draftInvoiceNo = (draft.invoice || '').trim().toLowerCase();
+
+  const matchesClient = normalizedClientName && draftClientName === normalizedClientName;
+  const matchesInvoice = normalizedInvoiceNo && draftInvoiceNo === normalizedInvoiceNo;
+
+  if (matchesClient || matchesInvoice) {
+    clearInvoiceDraft();
+  }
+};
+
+export const getCustomerOutstanding = (clientName) => {
+  if (!clientName) return 0;
+  const normalized = clientName.trim().toLowerCase();
+  const bills = getBills();
+  const total = bills
+    .filter((bill) => (bill.clientName || '').trim().toLowerCase() === normalized)
+    .reduce((sum, bill) => sum + (parseFloat(bill.total) || 0), 0);
+  return Math.round((total + Number.EPSILON) * 100) / 100;
 };
 
 export const getNextBillId = () => {

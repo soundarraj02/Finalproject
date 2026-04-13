@@ -7,14 +7,19 @@ import {
   OUR_DETAILS,
   addBill as addBillLocal,
   clearInvoiceDraft,
+  getCustomerOutstanding,
   getInvoiceDraft,
 } from '../utils/billingData';
 import './invoice.css';
 
+const HOME_STATE = 'Tamil Nadu';
 const today = () => new Date().toISOString().split('T')[0];
 const emptyRow = () => ({ desc: '', qty: '', unitPrice: '', price: '' });
+const roundCurrency = (value) => Math.round((value + Number.EPSILON) * 100) / 100;
+const normalizeState = (value) => (typeof value === 'string' ? value.trim().toLowerCase() : '');
 
 const getClientGstinValue = (client) => client?.gstIn || client?.gstin || client?.clientGstin || '';
+const getClientStateValue = (client) => client?.state || client?.clientState || '';
 
 const createDraftCustomer = (draft) => {
   if (!draft?.clientName) {
@@ -25,6 +30,7 @@ const createDraftCustomer = (draft) => {
     customerId: `draft-${draft.invoice || draft.clientName}`,
     clientName: draft.clientName,
     gstIn: draft.gstin,
+    state: draft.state || '',
   };
 };
 
@@ -32,8 +38,13 @@ export default function CreateInvoice({ billType = 'gst' }) {
   const isGstBill = billType === 'gst';
   const location = useLocation();
   const customers = useMemo(() => getCustomers(), []);
-  const invoiceDraft = useMemo(() => location.state?.invoiceDraft || getInvoiceDraft(), [location.state]);
+  const routeInvoiceDraft = location.state?.invoiceDraft || null;
+  const invoiceDraft = useMemo(() => routeInvoiceDraft || getInvoiceDraft(), [routeInvoiceDraft]);
   const customerOptions = useMemo(() => {
+    if (!routeInvoiceDraft) {
+      return customers;
+    }
+
     const draftCustomer = createDraftCustomer(invoiceDraft);
 
     if (!draftCustomer) {
@@ -42,13 +53,15 @@ export default function CreateInvoice({ billType = 'gst' }) {
 
     const hasExistingCustomer = customers.some((customer) => customer.clientName === draftCustomer.clientName);
     return hasExistingCustomer ? customers : [draftCustomer, ...customers];
-  }, [customers, invoiceDraft]);
+  }, [customers, invoiceDraft, routeInvoiceDraft]);
 
   const [date, setDate] = useState(today());
   const [invoiceNo, setInvoiceNo] = useState('');
   const [gstin, setGstin] = useState(OUR_DETAILS.gstin || '');
   const [selectedClient, setSelectedClient] = useState('');
   const [clientGstin, setClientGstin] = useState('');
+  const [clientState, setClientState] = useState('');
+  const [gstRate, setGstRate] = useState('18');
   const [rows, setRows] = useState([emptyRow()]);
   const [error, setError] = useState('');
   const [saved, setSaved] = useState(false);
@@ -58,16 +71,30 @@ export default function CreateInvoice({ billType = 'gst' }) {
       return;
     }
 
+    const matchingCustomer = customers.find((customer) => customer.clientName === invoiceDraft.clientName);
+    const shouldApplyDraftCustomer = Boolean(routeInvoiceDraft || matchingCustomer);
+
     setDate(invoiceDraft.date || today());
     setInvoiceNo(invoiceDraft.invoice || '');
-    setSelectedClient(invoiceDraft.clientName || '');
-    setClientGstin(invoiceDraft.gstin || '');
-  }, [invoiceDraft]);
+    setGstRate(String(invoiceDraft.gstRate ?? invoiceDraft.igstRate ?? 18));
+
+    if (shouldApplyDraftCustomer) {
+      setSelectedClient(invoiceDraft.clientName || '');
+      setClientGstin(invoiceDraft.gstin || '');
+      setClientState(invoiceDraft.state || '');
+      return;
+    }
+
+    setSelectedClient('');
+    setClientGstin('');
+    setClientState('');
+  }, [customers, invoiceDraft, routeInvoiceDraft]);
 
   useEffect(() => {
     const client = customerOptions.find((entry) => entry.clientName === selectedClient);
     if (client) {
       setClientGstin(getClientGstinValue(client));
+      setClientState(getClientStateValue(client));
     }
   }, [customerOptions, selectedClient]);
 
@@ -89,8 +116,64 @@ export default function CreateInvoice({ billType = 'gst' }) {
   };
 
   const subtotal = rows.reduce((sum, row) => sum + (parseFloat(row.price) || 0), 0);
-  const igstAmount = 0;
-  const total = subtotal + igstAmount;
+  const taxBreakdown = useMemo(() => {
+    const normalizedRate = isGstBill ? Math.max(0, Number(gstRate) || 0) : 0;
+    const normalizedClientState = normalizeState(clientState);
+    const isTamilNaduCustomer = normalizedClientState === normalizeState(HOME_STATE);
+
+    if (!isGstBill || normalizedRate === 0) {
+      return {
+        gstRate: 0,
+        isTamilNaduCustomer,
+        cgstRate: 0,
+        cgstAmount: 0,
+        sgstRate: 0,
+        sgstAmount: 0,
+        igstRate: 0,
+        igstAmount: 0,
+        taxAmount: 0,
+      };
+    }
+
+    if (isTamilNaduCustomer) {
+      const localRate = roundCurrency(normalizedRate / 2);
+      const cgstAmount = roundCurrency((subtotal * localRate) / 100);
+      const sgstAmount = roundCurrency((subtotal * localRate) / 100);
+
+      return {
+        gstRate: normalizedRate,
+        isTamilNaduCustomer,
+        cgstRate: localRate,
+        cgstAmount,
+        sgstRate: localRate,
+        sgstAmount,
+        igstRate: 0,
+        igstAmount: 0,
+        taxAmount: roundCurrency(cgstAmount + sgstAmount),
+      };
+    }
+
+    const igstAmount = roundCurrency((subtotal * normalizedRate) / 100);
+
+    return {
+      gstRate: normalizedRate,
+      isTamilNaduCustomer,
+      cgstRate: 0,
+      cgstAmount: 0,
+      sgstRate: 0,
+      sgstAmount: 0,
+      igstRate: normalizedRate,
+      igstAmount,
+      taxAmount: igstAmount,
+    };
+  }, [billType, clientState, gstRate, isGstBill, subtotal]);
+  const total = roundCurrency(subtotal + taxBreakdown.taxAmount);
+
+  const previousOutstanding = useMemo(
+    () => getCustomerOutstanding(selectedClient),
+    [selectedClient]
+  );
+  const grandTotal = roundCurrency(total + previousOutstanding);
 
   const handleSave = async () => {
     if (!invoiceNo.trim()) {
@@ -100,6 +183,11 @@ export default function CreateInvoice({ billType = 'gst' }) {
 
     if (!selectedClient.trim()) {
       setError('Please select a client.');
+      return;
+    }
+
+    if (isGstBill && !clientState.trim()) {
+      setError('Client state is required for GST calculation.');
       return;
     }
 
@@ -116,10 +204,17 @@ export default function CreateInvoice({ billType = 'gst' }) {
       gstin: isGstBill ? gstin : '',
       clientName: selectedClient,
       clientGstin: isGstBill ? clientGstin : '',
+      clientState: isGstBill ? clientState : '',
       rows,
       subtotal,
-      igstRate: 0,
-      igstAmount,
+      gstRate: taxBreakdown.gstRate,
+      cgstRate: taxBreakdown.cgstRate,
+      cgstAmount: taxBreakdown.cgstAmount,
+      sgstRate: taxBreakdown.sgstRate,
+      sgstAmount: taxBreakdown.sgstAmount,
+      igstRate: taxBreakdown.igstRate,
+      igstAmount: taxBreakdown.igstAmount,
+      taxAmount: taxBreakdown.taxAmount,
       total,
     };
 
@@ -176,6 +271,18 @@ export default function CreateInvoice({ billType = 'gst' }) {
                 <Form.Control value={gstin} onChange={(event) => setGstin(event.target.value)} />
               </p>
             )}
+            {isGstBill && (
+              <p>
+                GST % :
+                <Form.Control
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={gstRate}
+                  onChange={(event) => setGstRate(event.target.value)}
+                />
+              </p>
+            )}
           </div>
         </Col>
       </Row>
@@ -199,14 +306,25 @@ export default function CreateInvoice({ billType = 'gst' }) {
           </div>
 
           {isGstBill && (
-            <div className="box mt-2">
-              <label>GSTIN/UIN:</label>
-              <Form.Control
-                className="mt-2"
-                value={clientGstin}
-                onChange={(event) => setClientGstin(event.target.value)}
-              />
-            </div>
+            <>
+              <div className="box mt-2">
+                <label>GSTIN/UIN:</label>
+                <Form.Control
+                  className="mt-2"
+                  value={clientGstin}
+                  onChange={(event) => setClientGstin(event.target.value)}
+                />
+              </div>
+              <div className="box mt-2">
+                <label>State:</label>
+                <Form.Control
+                  className="mt-2"
+                  value={clientState}
+                  onChange={(event) => setClientState(event.target.value)}
+                  placeholder="Enter client state"
+                />
+              </div>
+            </>
           )}
         </Col>
       </Row>
@@ -259,10 +377,33 @@ export default function CreateInvoice({ billType = 'gst' }) {
         <Col md={3}>
           <div className="total-box">
             <p>Sub Total : {subtotal.toFixed(2)} INR</p>
-            <p>IGST : {igstAmount.toFixed(2)} INR</p>
+            {isGstBill && taxBreakdown.isTamilNaduCustomer && (
+              <>
+                <p>CGST ({taxBreakdown.cgstRate.toFixed(2)}%) : {taxBreakdown.cgstAmount.toFixed(2)} INR</p>
+                <p>SGST ({taxBreakdown.sgstRate.toFixed(2)}%) : {taxBreakdown.sgstAmount.toFixed(2)} INR</p>
+                <p className="tax-note">Applied for Tamil Nadu customer.</p>
+              </>
+            )}
+            {isGstBill && !taxBreakdown.isTamilNaduCustomer && (
+              <>
+                <p>
+                  IGST - {clientState || 'Other State'} ({taxBreakdown.igstRate.toFixed(2)}%) : {taxBreakdown.igstAmount.toFixed(2)} INR
+                </p>
+                {clientState && <p className="tax-note">Inter-state GST for {clientState}.</p>}
+              </>
+            )}
+            {!isGstBill && <p>Tax : 0.00 INR</p>}
             <p>
               <strong>TOTAL : {total.toFixed(2)} INR</strong>
             </p>
+            {previousOutstanding > 0 && (
+              <>
+                <p className="outstanding-line">Previous Outstanding : {previousOutstanding.toFixed(2)} INR</p>
+                <p>
+                  <strong>GRAND TOTAL : {grandTotal.toFixed(2)} INR</strong>
+                </p>
+              </>
+            )}
           </div>
         </Col>
       </Row>

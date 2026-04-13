@@ -20,7 +20,8 @@
 
 .master-left-btn,
 .master-right-btn,
-.master-primary-btn {
+.master-primary-btn,
+.master-reset-btn {
   border: none;
   border-radius: 8px;
   padding: 10px 16px;
@@ -33,6 +34,15 @@
 .master-primary-btn {
   background: linear-gradient(135deg, #667eea, #764ba2);
   color: #fff;
+}
+
+.master-reset-btn {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.master-reset-btn:hover {
+  background: #fecaca;
 }
 
 .master-right-btn {

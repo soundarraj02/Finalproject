@@ -18,6 +18,18 @@ export const addCustomer = (customerData) => {
   return newCustomer;
 };
 
+export const updateCustomer = (invoiceNumber, customerData) => {
+  const customers = getCustomers();
+  const updatedCustomers = customers.map((customer) => (
+    customer.invoiceNumber === invoiceNumber
+      ? { ...customer, ...customerData }
+      : customer
+  ));
+
+  saveCustomers(updatedCustomers);
+  return updatedCustomers.find((customer) => customer.invoiceNumber === (customerData.invoiceNumber || invoiceNumber));
+};
+
 export const deleteCustomer = (invoiceNumber) => {
   const customers = getCustomers();
   const filteredCustomers = customers.filter((customer) => customer.invoiceNumber !== invoiceNumber);
@@ -33,7 +45,34 @@ export const getNextInvoiceNumber = () => {
   const lastId = localStorage.getItem('lastInvoiceNumber') || '0';
   const nextId = parseInt(lastId, 10) + 1;
   localStorage.setItem('lastInvoiceNumber', nextId.toString());
-  return `INV${String(nextId).padStart(5, '0')}`;
+  const year = String(new Date().getFullYear()).slice(-2);
+  return `KIT/${year}/${String(nextId).padStart(3, '0')}`;
+};
+
+const extractInvoiceSequence = (invoiceNumber = '') => {
+  const normalized = String(invoiceNumber).trim();
+  const match = normalized.match(/(\d+)\s*$/);
+
+  if (!match) {
+    return null;
+  }
+
+  return parseInt(match[1], 10);
+};
+
+export const syncInvoiceCounter = (invoiceNumber) => {
+  const sequence = extractInvoiceSequence(invoiceNumber);
+
+  if (!Number.isInteger(sequence) || sequence < 0) {
+    return false;
+  }
+
+  localStorage.setItem('lastInvoiceNumber', sequence.toString());
+  return true;
+};
+
+export const resetInvoiceNumber = () => {
+  localStorage.setItem('lastInvoiceNumber', '0');
 };
 
 export const INDIAN_STATES = [

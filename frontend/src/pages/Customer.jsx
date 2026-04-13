@@ -11,14 +11,21 @@ const Customer = () => {
     <div className="customer-page">
       <div className="customer-container">
         <div className="customer-header">
+          <div className="customer-title-block">
+            <p className="customer-eyebrow">Customer</p>
+            <h1>GST Customer Menu</h1>
+            <p>Use the menu below to move between Dashboard, Master Dashboard, customer registration, and customer records.</p>
+          </div>
+        </div>
+
+        <div className="customer-nav-grid">
           <button className="customer-link-btn" onClick={() => navigate('/dashboard')}>
             ← Dashboard
           </button>
-          <div className="customer-title-block">
-            <h1>GST Invoice</h1>
-            <p>Register customers and manage invoice-linked client records.</p>
-          </div>
-          <button className="customer-link-btn" onClick={() => navigate('/customer/customer-list')}>
+          <button className="customer-link-btn customer-link-btn-secondary" onClick={() => navigate('/student-info/master')}>
+            Master Dashboard
+          </button>
+          <button className="customer-link-btn customer-link-btn-secondary" onClick={() => navigate('/customer/customer-list')}>
             Customer List
           </button>
         </div>
@@ -31,10 +38,10 @@ const Customer = () => {
         </div>
 
         <div className="customer-actions-grid">
-          <button className="customer-action-card" onClick={() => navigate('/student-info/master')}>
+          <button className="customer-action-card" onClick={() => navigate('/customer/add-customer')}>
             <span className="action-icon">🧾</span>
             <h2>Add Customer</h2>
-            <p>Generate invoice number in Master and move to the customer registration page.</p>
+            <p>Register a new customer with invoice and GST details.</p>
           </button>
           <button className="customer-action-card" onClick={() => navigate('/customer/customer-list')}>
             <span className="action-icon">📋</span>

@@ -5,6 +5,14 @@ const vendorSchema = new mongoose.Schema(
     vendorId: { type: String, unique: true },
     vendorName: { type: String, required: true },
     vendorType: { type: String },
+    mobileNumber: { type: String },
+    emailId: { type: String },
+    currentBalance: { type: Number, default: 0 },
+    paidAmount: { type: Number, default: 0 },
+    remainingAmount: { type: Number, default: 0 },
+    comments: { type: String },
+
+    // Legacy aliases kept for backward compatibility with existing UI/API usage.
     email: { type: String },
     phone: { type: String },
     address: { type: String },

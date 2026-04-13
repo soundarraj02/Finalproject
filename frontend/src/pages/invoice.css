@@ -69,6 +69,23 @@
   font-size: 13px;
 }
 
+.total-box p {
+  margin-bottom: 6px;
+}
+
+.tax-note {
+  color: #4b5563;
+  font-size: 11px;
+}
+
+.outstanding-line {
+  color: #b45309;
+  font-weight: 600;
+  border-top: 1px solid #d1d5db;
+  padding-top: 4px;
+  margin-top: 4px;
+}
+
 .thank-text {
   text-align: center;
   color: #2c7a7b;
