@@ -42,6 +42,7 @@ import Reports from './pages/Reports';
 import Billing from './pages/Billing';
 import BillingGST from './pages/BillingGST';
 import BillingNonGST from './pages/BillingNonGST';
+import BillingHistory from './pages/BillingHistory';
 import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
 
@@ -389,6 +390,14 @@ function App() {
           element={
             <ProtectedRoute>
               <BillingNonGST />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/billing/history"
+          element={
+            <ProtectedRoute>
+              <BillingHistory />
             </ProtectedRoute>
           }
         />

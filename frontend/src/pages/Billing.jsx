@@ -60,9 +60,14 @@ const Billing = () => {
           <p className="billing-eyebrow">Billing</p>
           <h1>Choose the bill type</h1>
         </div>
-        <button className="billing-master-btn" onClick={() => navigate('/student-info/master/invoice-no')}>
-          Master &gt; Invoice No
-        </button>
+        <div className="billing-header-buttons">
+          <button className="billing-master-btn" onClick={() => navigate('/billing/history')}>
+            View History
+          </button>
+          <button className="billing-master-btn" onClick={() => navigate('/student-info/master/invoice-no')}>
+            Master &gt; Invoice No
+          </button>
+        </div>
       </div>
 
       {error && <div className="billing-error-banner">{error}</div>}

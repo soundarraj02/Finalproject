@@ -11,6 +11,7 @@ const customerSchema = new mongoose.Schema(
     state: { type: String },
     pincode: { type: String },
     gstin: { type: String },
+    customerType: { type: String, enum: ['GST', 'Non-GST'], default: 'GST' },
     invoiceNumber: { type: String },
     balance: { type: Number, default: 0 },
     notes: { type: String },

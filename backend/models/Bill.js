@@ -37,6 +37,7 @@ const billSchema = new mongoose.Schema(
     igstAmount: { type: Number, default: 0 },
     taxAmount: { type: Number, default: 0 },
     total: { type: Number, default: 0 },
+    status: { type: String, enum: ['unpaid', 'paid'], default: 'unpaid' },
   },
   { timestamps: true }
 );

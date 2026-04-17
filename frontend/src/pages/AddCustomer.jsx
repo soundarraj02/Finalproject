@@ -1,7 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Alert, Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
-import { addCustomer, getNextInvoiceNumber, INDIAN_STATES } from '../utils/customerData';
+import { addCustomer as addCustomerAPI } from '../services/customerService';
+import {
+  addCustomer as addCustomerLocal,
+  getPreviewInvoiceNumber,
+  syncInvoiceCounterFromCustomers,
+  syncInvoiceCounter,
+  getCustomers,
+  INDIAN_STATES,
+} from '../utils/customerData';
 
 const AddCustomer = () => {
   const navigate = useNavigate();
@@ -17,11 +25,13 @@ const AddCustomer = () => {
     state: '',
     invoiceNumber: location.state?.invoiceNumber || '',
     gstIn: '',
+    customerType: 'GST',
   });
 
   useEffect(() => {
     if (!formData.invoiceNumber) {
-      setFormData((prev) => ({ ...prev, invoiceNumber: getNextInvoiceNumber() }));
+      syncInvoiceCounterFromCustomers(getCustomers());
+      setFormData((prev) => ({ ...prev, invoiceNumber: getPreviewInvoiceNumber() }));
     }
   }, []);
 
@@ -37,7 +47,7 @@ const AddCustomer = () => {
     if (!formData.date) return 'Date is required.';
     if (!formData.state) return 'State is required.';
     if (!formData.invoiceNumber) return 'Invoice number is required.';
-    if (!formData.gstIn.trim()) return 'GST IN is required.';
+    if (formData.customerType === 'GST' && !formData.gstIn.trim()) return 'GST IN is required for GST customers.';
     return '';
   };
 
@@ -55,7 +65,25 @@ const AddCustomer = () => {
     }
 
     try {
-      addCustomer(formData);
+      syncInvoiceCounter(formData.invoiceNumber);
+      const apiPayload = {
+        clientName: formData.clientName,
+        address: formData.address,
+        phone: formData.contactNumber,
+        state: formData.state,
+        invoiceNumber: formData.invoiceNumber,
+        gstin: formData.gstIn,
+        customerType: formData.customerType,
+      };
+
+      try {
+        await addCustomerAPI(apiPayload);
+      } catch {
+        // Keep local fallback so user can continue if API is unavailable.
+      }
+
+      addCustomerLocal(formData);
+      syncInvoiceCounterFromCustomers(getCustomers());
       setSuccess('Customer registered successfully. Redirecting...');
       setTimeout(() => navigate('/customer/customer-list'), 900);
     } catch {
@@ -137,18 +165,27 @@ const AddCustomer = () => {
               </Col>
               <Col md={6}>
                 <Form.Group>
+                  <Form.Label>Customer Type *</Form.Label>
+                  <Form.Select name="customerType" value={formData.customerType} onChange={handleInputChange}>
+                    <option value="GST">GST Customer</option>
+                    <option value="Non-GST">Non-GST Customer</option>
+                  </Form.Select>
+                </Form.Group>
+              </Col>
+              <Col md={6}>
+                <Form.Group>
                   <Form.Label>Invoice Number *</Form.Label>
                   <Form.Control name="invoiceNumber" value={formData.invoiceNumber} readOnly />
                 </Form.Group>
               </Col>
               <Col md={6}>
                 <Form.Group>
-                  <Form.Label>GST IN *</Form.Label>
+                  <Form.Label>{formData.customerType === 'GST' ? 'GST IN *' : 'GST IN'}</Form.Label>
                   <Form.Control
                     name="gstIn"
                     value={formData.gstIn}
                     onChange={handleInputChange}
-                    placeholder="Enter GST IN"
+                    placeholder={formData.customerType === 'GST' ? 'Enter GST IN' : 'Optional for Non-GST customers'}
                   />
                 </Form.Group>
               </Col>

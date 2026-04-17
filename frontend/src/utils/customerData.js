@@ -49,7 +49,27 @@ export const getNextInvoiceNumber = () => {
   return `KIT/${year}/${String(nextId).padStart(3, '0')}`;
 };
 
-const extractInvoiceSequence = (invoiceNumber = '') => {
+export const getPreviewInvoiceNumber = () => {
+  const lastId = localStorage.getItem('lastInvoiceNumber') || '0';
+  const nextId = parseInt(lastId, 10) + 1;
+  const year = String(new Date().getFullYear()).slice(-2);
+  return `KIT/${year}/${String(nextId).padStart(3, '0')}`;
+};
+
+  export const syncInvoiceCounterFromCustomers = (customers = []) => {
+    let maxSequence = 0;
+    customers.forEach((customer) => {
+      const invoiceNum = customer.invoiceNumber || '';
+      const sequence = extractInvoiceSequence(invoiceNum);
+      if (Number.isInteger(sequence) && sequence > maxSequence) {
+        maxSequence = sequence;
+      }
+    });
+    localStorage.setItem('lastInvoiceNumber', maxSequence.toString());
+    return maxSequence;
+  };
+
+  const extractInvoiceSequence = (invoiceNumber = '') => {
   const normalized = String(invoiceNumber).trim();
   const match = normalized.match(/(\d+)\s*$/);
 

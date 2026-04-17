@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Button, Col, Container, Form, Row, Table } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
-import { addBill } from '../services/billingService';
-import { getCustomers } from '../utils/customerData';
+import { addBill, getBills } from '../services/billingService';
+import { getCustomers as getCustomersAPI } from '../services/customerService';
+ import { getCustomers, syncInvoiceCounterFromCustomers } from '../utils/customerData';
 import {
   OUR_DETAILS,
   addBill as addBillLocal,
   clearInvoiceDraft,
-  getCustomerOutstanding,
   getInvoiceDraft,
 } from '../utils/billingData';
 import './invoice.css';
@@ -20,6 +20,26 @@ const normalizeState = (value) => (typeof value === 'string' ? value.trim().toLo
 
 const getClientGstinValue = (client) => client?.gstIn || client?.gstin || client?.clientGstin || '';
 const getClientStateValue = (client) => client?.state || client?.clientState || '';
+const getClientInvoiceNumber = (client) => client?.invoiceNumber || '';
+const getCustomerKey = (customer) =>
+  String(customer?.invoiceNumber || customer?.customerId || customer?.clientName || '')
+    .trim()
+    .toLowerCase();
+
+const mergeCustomers = (apiCustomers = [], localCustomers = []) => {
+  const merged = [...apiCustomers];
+  const existing = new Set(apiCustomers.map(getCustomerKey));
+
+  localCustomers.forEach((customer) => {
+    const key = getCustomerKey(customer);
+    if (key && !existing.has(key)) {
+      merged.push(customer);
+      existing.add(key);
+    }
+  });
+
+  return merged;
+};
 
 const createDraftCustomer = (draft) => {
   if (!draft?.clientName) {
@@ -37,7 +57,48 @@ const createDraftCustomer = (draft) => {
 export default function CreateInvoice({ billType = 'gst' }) {
   const isGstBill = billType === 'gst';
   const location = useLocation();
-  const customers = useMemo(() => getCustomers(), []);
+  const [customers, setCustomers] = useState([]);
+  const [bills, setBills] = useState([]);
+  
+  // Function to calculate outstanding from bills data
+  const getOutstandingForCustomer = (clientName) => {
+    if (!clientName || !bills.length) return 0;
+    const normalized = clientName.trim().toLowerCase();
+    const total = bills
+      .filter((bill) => {
+        const billClientMatch = (bill.clientName || '').trim().toLowerCase() === normalized;
+        const isUnpaid = bill.status !== 'paid';
+        return billClientMatch && isUnpaid;
+      })
+      .reduce((sum, bill) => sum + (parseFloat(bill.total) || 0), 0);
+    return Math.round((total + Number.EPSILON) * 100) / 100;
+  };
+  
+  // Fetch customers and bills from API on mount
+  useEffect(() => {
+    const fetchData = async () => {
+      const localCustomers = getCustomers() || [];
+
+      try {
+        const [apiCustomers, apiBills] = await Promise.all([
+          getCustomersAPI(),
+          getBills()
+        ]);
+        const combinedCustomers = mergeCustomers(apiCustomers || [], localCustomers);
+        syncInvoiceCounterFromCustomers(combinedCustomers);
+        setCustomers(combinedCustomers);
+        setBills(apiBills || []);
+      } catch (error) {
+        // Fallback to localStorage if API fails
+        syncInvoiceCounterFromCustomers(localCustomers);
+        setCustomers(localCustomers);
+        setBills([]);
+      }
+    };
+    
+    fetchData();
+  }, []);
+
   const routeInvoiceDraft = location.state?.invoiceDraft || null;
   const invoiceDraft = useMemo(() => routeInvoiceDraft || getInvoiceDraft(), [routeInvoiceDraft]);
   const customerOptions = useMemo(() => {
@@ -58,13 +119,18 @@ export default function CreateInvoice({ billType = 'gst' }) {
   const [date, setDate] = useState(today());
   const [invoiceNo, setInvoiceNo] = useState('');
   const [gstin, setGstin] = useState(OUR_DETAILS.gstin || '');
-  const [selectedClient, setSelectedClient] = useState('');
+  const [selectedCustomerKey, setSelectedCustomerKey] = useState('');
   const [clientGstin, setClientGstin] = useState('');
   const [clientState, setClientState] = useState('');
   const [gstRate, setGstRate] = useState('18');
   const [rows, setRows] = useState([emptyRow()]);
   const [error, setError] = useState('');
   const [saved, setSaved] = useState(false);
+  const selectedCustomer = useMemo(
+    () => customerOptions.find((entry) => getCustomerKey(entry) === selectedCustomerKey) || null,
+    [customerOptions, selectedCustomerKey]
+  );
+  const selectedClient = selectedCustomer?.clientName || '';
 
   useEffect(() => {
     if (!invoiceDraft) {
@@ -79,24 +145,35 @@ export default function CreateInvoice({ billType = 'gst' }) {
     setGstRate(String(invoiceDraft.gstRate ?? invoiceDraft.igstRate ?? 18));
 
     if (shouldApplyDraftCustomer) {
-      setSelectedClient(invoiceDraft.clientName || '');
+      const draftMatchedCustomer = customerOptions.find(
+        (customer) =>
+          customer.clientName === invoiceDraft.clientName
+          && (!invoiceDraft.invoice || getClientInvoiceNumber(customer) === invoiceDraft.invoice)
+      ) || customerOptions.find((customer) => customer.clientName === invoiceDraft.clientName);
+
+      setSelectedCustomerKey(draftMatchedCustomer ? getCustomerKey(draftMatchedCustomer) : '');
       setClientGstin(invoiceDraft.gstin || '');
       setClientState(invoiceDraft.state || '');
       return;
     }
 
-    setSelectedClient('');
+    setSelectedCustomerKey('');
     setClientGstin('');
     setClientState('');
-  }, [customers, invoiceDraft, routeInvoiceDraft]);
+  }, [customerOptions, customers, invoiceDraft, routeInvoiceDraft]);
 
   useEffect(() => {
-    const client = customerOptions.find((entry) => entry.clientName === selectedClient);
-    if (client) {
-      setClientGstin(getClientGstinValue(client));
-      setClientState(getClientStateValue(client));
+    if (!selectedCustomer) {
+      setClientGstin('');
+      setClientState('');
+      return;
     }
-  }, [customerOptions, selectedClient]);
+
+    const invoiceNum = getClientInvoiceNumber(selectedCustomer);
+    setClientGstin(getClientGstinValue(selectedCustomer) || '');
+    setClientState(getClientStateValue(selectedCustomer) || '');
+    setInvoiceNo(invoiceNum || '');
+  }, [selectedCustomer]);
 
   const handleRowChange = (index, field, value) => {
     setRows((prev) => {
@@ -170,8 +247,8 @@ export default function CreateInvoice({ billType = 'gst' }) {
   const total = roundCurrency(subtotal + taxBreakdown.taxAmount);
 
   const previousOutstanding = useMemo(
-    () => getCustomerOutstanding(selectedClient),
-    [selectedClient]
+    () => getOutstandingForCustomer(selectedClient),
+    [selectedClient, bills]
   );
   const grandTotal = roundCurrency(total + previousOutstanding);
 
@@ -271,18 +348,6 @@ export default function CreateInvoice({ billType = 'gst' }) {
                 <Form.Control value={gstin} onChange={(event) => setGstin(event.target.value)} />
               </p>
             )}
-            {isGstBill && (
-              <p>
-                GST % :
-                <Form.Control
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  value={gstRate}
-                  onChange={(event) => setGstRate(event.target.value)}
-                />
-              </p>
-            )}
           </div>
         </Col>
       </Row>
@@ -293,12 +358,12 @@ export default function CreateInvoice({ billType = 'gst' }) {
             <label>INVOICE TO:</label>
             <Form.Select
               className="mt-2"
-              value={selectedClient}
-              onChange={(event) => setSelectedClient(event.target.value)}
+              value={selectedCustomerKey}
+              onChange={(event) => setSelectedCustomerKey(event.target.value)}
             >
               <option value="">Select a Client</option>
               {customerOptions.map((customer) => (
-                <option key={customer.customerId} value={customer.clientName}>
+                <option key={customer.customerId || getCustomerKey(customer)} value={getCustomerKey(customer)}>
                   {customer.clientName}
                 </option>
               ))}

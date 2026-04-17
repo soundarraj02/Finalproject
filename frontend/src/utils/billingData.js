@@ -85,7 +85,12 @@ export const getCustomerOutstanding = (clientName) => {
   const normalized = clientName.trim().toLowerCase();
   const bills = getBills();
   const total = bills
-    .filter((bill) => (bill.clientName || '').trim().toLowerCase() === normalized)
+    .filter((bill) => {
+      const billClientMatch = (bill.clientName || '').trim().toLowerCase() === normalized;
+      // Only count unpaid bills (status !== 'paid')
+      const isUnpaid = bill.status !== 'paid';
+      return billClientMatch && isUnpaid;
+    })
     .reduce((sum, bill) => sum + (parseFloat(bill.total) || 0), 0);
   return Math.round((total + Number.EPSILON) * 100) / 100;
 };

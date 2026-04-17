@@ -69,6 +69,12 @@
   cursor: pointer;
 }
 
+.billing-header-buttons {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
 .billing-error-banner {
   margin-bottom: 16px;
   padding: 12px 14px;
