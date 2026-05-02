@@ -263,11 +263,6 @@ export default function CreateInvoice({ billType = 'gst' }) {
       return;
     }
 
-    if (isGstBill && !clientState.trim()) {
-      setError('Client state is required for GST calculation.');
-      return;
-    }
-
     const hasLineItem = rows.some((row) => row.desc.trim() && (parseFloat(row.qty) || 0) > 0);
     if (!hasLineItem) {
       setError('Add at least one valid bill item.');
@@ -380,15 +375,7 @@ export default function CreateInvoice({ billType = 'gst' }) {
                   onChange={(event) => setClientGstin(event.target.value)}
                 />
               </div>
-              <div className="box mt-2">
-                <label>State:</label>
-                <Form.Control
-                  className="mt-2"
-                  value={clientState}
-                  onChange={(event) => setClientState(event.target.value)}
-                  placeholder="Enter client state"
-                />
-              </div>
+
             </>
           )}
         </Col>
@@ -439,37 +426,45 @@ export default function CreateInvoice({ billType = 'gst' }) {
       </Table>
 
       <Row className="justify-content-end">
-        <Col md={3}>
-          <div className="total-box">
-            <p>Sub Total : {subtotal.toFixed(2)} INR</p>
-            {isGstBill && taxBreakdown.isTamilNaduCustomer && (
-              <>
-                <p>CGST ({taxBreakdown.cgstRate.toFixed(2)}%) : {taxBreakdown.cgstAmount.toFixed(2)} INR</p>
-                <p>SGST ({taxBreakdown.sgstRate.toFixed(2)}%) : {taxBreakdown.sgstAmount.toFixed(2)} INR</p>
-                <p className="tax-note">Applied for Tamil Nadu customer.</p>
-              </>
-            )}
-            {isGstBill && !taxBreakdown.isTamilNaduCustomer && (
-              <>
-                <p>
-                  IGST - {clientState || 'Other State'} ({taxBreakdown.igstRate.toFixed(2)}%) : {taxBreakdown.igstAmount.toFixed(2)} INR
-                </p>
-                {clientState && <p className="tax-note">Inter-state GST for {clientState}.</p>}
-              </>
-            )}
-            {!isGstBill && <p>Tax : 0.00 INR</p>}
-            <p>
-              <strong>TOTAL : {total.toFixed(2)} INR</strong>
-            </p>
-            {previousOutstanding > 0 && (
-              <>
-                <p className="outstanding-line">Previous Outstanding : {previousOutstanding.toFixed(2)} INR</p>
-                <p>
-                  <strong>GRAND TOTAL : {grandTotal.toFixed(2)} INR</strong>
-                </p>
-              </>
-            )}
-          </div>
+        <Col md={5}>
+          <table className="total-table">
+            <tbody>
+              <tr>
+                <td className="total-label">SUB TOTAL</td>
+                <td className="total-value">{subtotal.toFixed(2)} INR</td>
+              </tr>
+              {isGstBill && taxBreakdown.isTamilNaduCustomer && (
+                <>
+                  <tr>
+                    <td className="total-label">CGST {taxBreakdown.cgstRate.toFixed(0)}%</td>
+                    <td className="total-value">{taxBreakdown.cgstAmount.toFixed(2)} INR</td>
+                  </tr>
+                  <tr>
+                    <td className="total-label">SGST {taxBreakdown.sgstRate.toFixed(0)}%</td>
+                    <td className="total-value">{taxBreakdown.sgstAmount.toFixed(2)} INR</td>
+                  </tr>
+                </>
+              )}
+              {isGstBill && !taxBreakdown.isTamilNaduCustomer && (
+                <tr>
+                  <td className="total-label">IGST {taxBreakdown.igstRate.toFixed(0)}%</td>
+                  <td className="total-value">{taxBreakdown.igstAmount.toFixed(2)} INR</td>
+                </tr>
+              )}
+              <tr className="total-row-highlight">
+                <td className="total-label">BILL AMOUNT</td>
+                <td className="total-value">{total.toFixed(2)} INR</td>
+              </tr>
+              <tr>
+                <td className="total-label">LAST MONTH BALANCE</td>
+                <td className="total-value">{previousOutstanding.toFixed(2)} INR</td>
+              </tr>
+              <tr className="total-row-final">
+                <td className="total-label">TOTAL</td>
+                <td className="total-value">{grandTotal.toFixed(2)} INR</td>
+              </tr>
+            </tbody>
+          </table>
         </Col>
       </Row>
 

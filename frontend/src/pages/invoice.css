@@ -64,26 +64,40 @@
   font-size: 12px;
 }
 
-.total-box {
-  text-align: right;
+.total-table {
+  width: auto;
+  border-collapse: collapse;
   font-size: 13px;
+  margin-left: auto;
 }
 
-.total-box p {
-  margin-bottom: 6px;
+.total-table .total-label {
+  font-weight: 700;
+  text-align: right;
+  padding: 5px 12px 5px 8px;
+  border: 1px solid #000;
+  white-space: nowrap;
+  background: #fff;
 }
 
-.tax-note {
-  color: #4b5563;
-  font-size: 11px;
+.total-table .total-value {
+  text-align: right;
+  padding: 5px 10px;
+  border: 1px solid #000;
+  background: #fff;
 }
 
-.outstanding-line {
-  color: #b45309;
-  font-weight: 600;
-  border-top: 1px solid #d1d5db;
-  padding-top: 4px;
-  margin-top: 4px;
+.total-row-highlight .total-label,
+.total-row-highlight .total-value {
+  font-weight: 700;
+  background: #fff;
+}
+
+.total-row-final .total-label,
+.total-row-final .total-value {
+  font-weight: 700;
+  font-size: 14px;
+  background: #fff;
 }
 
 .thank-text {
